@@ -1,0 +1,33 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Disclosure from '../components/Disclosure.astro';
+import { SITE } from '../data/site';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  path?: string;
+  ogType?: string;
+  schemas?: unknown[];
+  noindex?: boolean;
+}
+const props = Astro.props;
+---
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <BaseHead {...props} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">本文へスキップ</a>
+    <Header />
+    <Disclosure />
+    <main id="main" class="container">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

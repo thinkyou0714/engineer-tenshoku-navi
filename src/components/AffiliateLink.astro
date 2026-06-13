@@ -1,0 +1,17 @@
+---
+// Affiliate/external link with the Google-required rel="sponsored nofollow".
+// (The markdown rehype plugin also enforces this site-wide; this component is for
+// hand-authored .astro pages.)
+interface Props {
+  href: string;
+  class?: string;
+}
+const { href, class: className } = Astro.props;
+const external = /^https?:\/\//i.test(href);
+---
+<a
+  href={href}
+  class={['aff', className].filter(Boolean).join(' ')}
+  rel={external ? 'sponsored nofollow noopener' : undefined}
+  target={external ? '_blank' : undefined}
+><slot /></a>

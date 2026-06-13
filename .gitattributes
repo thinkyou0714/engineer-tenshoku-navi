@@ -1,0 +1,13 @@
+# Normalize line endings: store LF in the repo, so CI (Linux) gets LF
+# regardless of the contributor's OS. Binary assets are left untouched.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.avif binary
+*.woff binary
+*.woff2 binary

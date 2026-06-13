@@ -1,0 +1,53 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compliance lint (薬機法/景表法/特商法/承認率)
+        run: |
+          out="$(python3 scripts/compliance-lint.py --root src/content/posts)"
+          echo "$out"
+          echo "$out" | grep -q '検出数: 0' \
+            || { echo '::error::compliance lint found risky expressions in src/content/posts'; exit 1; }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Affiliate-link compliance (rel=sponsored on external links)
+        run: |
+          bad="$(grep -rhoE '<a [^>]*href="https?://[^"]*"[^>]*>' dist/ | grep -v 'rel="[^"]*sponsored' || true)"
+          if [ -n "$bad" ]; then
+            echo "$bad"
+            echo '::error::external <a> without rel="sponsored" found in dist/'
+            exit 1
+          fi
+          echo "OK: all external links carry rel=sponsored"
+
+      - name: Internal link check (/guide/* targets exist)
+        run: |
+          miss=0
+          for href in $(grep -rhoE 'href="/guide/[a-z0-9-]+"' dist/ \
+                        | sed -E 's/.*href="([^"]+)".*/\1/' | sort -u); do
+            [ -f "dist${href}/index.html" ] || { echo "broken internal link: $href"; miss=$((miss+1)); }
+          done
+          [ "$miss" -eq 0 ] || { echo "::error::$miss broken internal link(s)"; exit 1; }
+          echo "OK: internal /guide links resolve"

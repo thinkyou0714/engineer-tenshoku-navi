@@ -1,0 +1,49 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import AuthorBox from '../components/AuthorBox.astro';
+import { articleSchema, breadcrumbSchema, faqSchema } from '../utils/schema';
+import { SITE } from '../data/site';
+import type { Faq } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  publishDate: Date;
+  updatedDate?: Date;
+  faq?: Faq[];
+}
+const { title, description, path, publishDate, updatedDate, faq } = Astro.props;
+
+const iso = (d: Date) => d.toISOString();
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+
+const crumbs = [{ name: 'ホーム', url: '/' }, { name: title, url: path }];
+const schemas = [
+  articleSchema({
+    title,
+    description,
+    path,
+    datePublished: iso(publishDate),
+    dateModified: iso(updatedDate ?? publishDate),
+  }),
+  breadcrumbSchema(crumbs),
+  faqSchema(faq),
+];
+---
+<BaseLayout title={title} description={description} path={path} ogType="article" schemas={schemas}>
+  <Breadcrumb items={crumbs} />
+  <article class="post">
+    <h1>{title}</h1>
+    <p class="post-meta">
+      <time datetime={fmt(publishDate)}>公開 {fmt(publishDate)}</time>
+      {updatedDate && <> ・ <time datetime={fmt(updatedDate)}>更新 {fmt(updatedDate)}</time></>}
+      ・ 執筆 {SITE.author.name}
+    </p>
+    <div class="prose">
+      <slot />
+    </div>
+    <AuthorBox />
+  </article>
+</BaseLayout>

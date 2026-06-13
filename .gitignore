@@ -1,0 +1,17 @@
+# build output
+dist/
+# generated types
+.astro/
+# deps
+node_modules/
+# logs
+*.log
+npm-debug.log*
+# env
+.env
+.env.production
+# vercel
+.vercel
+# os
+.DS_Store
+Thumbs.db

@@ -1,0 +1,14 @@
+---
+import { SITE } from '../data/site';
+---
+<aside class="authorbox">
+  <p class="authorbox-name">執筆: {SITE.author.name}（{SITE.author.jobTitle}）</p>
+  <p class="small">{SITE.author.bio}</p>
+  {SITE.author.sameAs.length > 0 && (
+    <p class="small">
+      {SITE.author.sameAs.map((u) => (
+        <a href={u} rel="me noopener" target="_blank">{u}</a>
+      ))}
+    </p>
+  )}
+</aside>

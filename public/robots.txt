@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Replace the host below with your production domain.
+Sitemap: https://engineer-tenshoku-navi.vercel.app/sitemap-index.xml

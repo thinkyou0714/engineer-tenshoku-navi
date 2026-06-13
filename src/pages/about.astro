@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { personSchema, organizationSchema } from '../utils/schema';
+import { SITE } from '../data/site';
+const schemas = [personSchema(), organizationSchema()];
+---
+<BaseLayout title="運営者情報" description={`${SITE.name}の運営方針・編集体制・免責事項。`} path="/about" schemas={schemas}>
+  <h1>運営者情報</h1>
+
+  <h2>編集方針</h2>
+  <p>{SITE.name}は、エンジニア・IT職の転職サービスを<strong>事実ベースで比較</strong>する情報サイトです。
+  各社の公式情報・公開データをもとに、成果条件・対象者・特徴を中立に整理します。</p>
+  <ul>
+    <li>架空の体験談・偽レビュー・根拠のない順位付けは行いません。</li>
+    <li>「必ず転職できる」等の断定や、誇大な表現は使いません(結果には個人差があります)。</li>
+    <li>ランキング・比較は採点基準を明記し、<strong>報酬額は順位に用いません</strong>。</li>
+    <li>転職エージェント/スカウトの利用は、求職者は無料です(費用は採用企業が負担)。</li>
+  </ul>
+
+  <h2>運営者</h2>
+  <p id="author"><strong>{SITE.author.name}</strong>（{SITE.author.jobTitle}）</p>
+  <p>{SITE.author.bio}</p>
+  <p class="small">※運営者の経歴・資格は <code>src/data/site.ts</code> の <code>author</code> を実在の情報に置き換えてください(捏造はしないでください)。</p>
+
+  <h2>免責事項</h2>
+  <p>掲載情報は作成時点のもので、正確性・最新性・有用性を保証しません。各社の最新情報・規約を必ずご確認ください。
+  本サイトは法的助言ではありません。最終判断はご自身の責任で行ってください。</p>
+
+  <p><a href="/affiliate-policy">アフィリエイトポリシー</a> ・ <a href="/disclosures">広告掲載について</a> ・ <a href="/privacy">プライバシーポリシー</a></p>
+</BaseLayout>

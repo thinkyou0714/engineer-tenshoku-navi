@@ -1,0 +1,88 @@
+:root {
+  --fg: #1a1a1a;
+  --muted: #555;
+  --bg: #ffffff;
+  --bg-soft: #f6f7f9;
+  --border: #e3e6ea;
+  --accent: #1f6feb;
+  --accent-dark: #1551b5;
+  --max: 760px;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  color: var(--fg);
+  background: var(--bg);
+  font-family: system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+.container { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 16px; }
+
+a { color: var(--accent); text-underline-offset: 2px; }
+a:hover { color: var(--accent-dark); }
+
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.skip-link {
+  position: absolute; left: -9999px; top: 0; background: #fff; padding: 8px 12px; z-index: 100;
+}
+.skip-link:focus { left: 8px; top: 8px; border: 1px solid var(--border); border-radius: 6px; }
+
+/* Header / Footer */
+.site-header { border-bottom: 1px solid var(--border); background: var(--bg); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 16px; flex-wrap: wrap; }
+.brand { font-weight: 700; font-size: 1.05rem; text-decoration: none; color: var(--fg); }
+.site-header nav a { margin-left: 14px; font-size: .92rem; }
+.site-footer { border-top: 1px solid var(--border); margin-top: 48px; padding: 24px 0 40px; background: var(--bg-soft); }
+.site-footer nav a { margin-right: 14px; font-size: .9rem; }
+.small { color: var(--muted); font-size: .82rem; line-height: 1.7; }
+
+/* Disclosure banner (景表法/ステマ) */
+.disclosure {
+  background: #fff8e1; border-bottom: 1px solid #f0e2b6; color: #5b4b16;
+  font-size: .82rem; padding: 8px 16px; text-align: center;
+}
+.disclosure a { color: #5b4b16; }
+
+/* Hero / cards */
+.hero { padding: 28px 0 8px; }
+.hero h1 { font-size: 1.7rem; line-height: 1.4; margin: 0 0 8px; }
+.grid { display: grid; gap: 16px; }
+@media (min-width: 620px) { .grid { grid-template-columns: 1fr 1fr; } }
+.card { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; background: var(--bg); }
+.card h2 { font-size: 1.05rem; margin: 6px 0; }
+.card p { color: var(--muted); font-size: .9rem; margin: 0; }
+.badge { display: inline-block; font-size: .72rem; padding: 2px 8px; border-radius: 999px; background: var(--bg-soft); border: 1px solid var(--border); color: var(--muted); }
+.badge-pillar { background: #e7f0ff; border-color: #c7ddff; color: var(--accent-dark); }
+
+/* Breadcrumb */
+.breadcrumb { font-size: .8rem; margin: 16px 0 4px; }
+.breadcrumb ol { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 0; }
+.breadcrumb li:not(:last-child)::after { content: "›"; margin-left: 6px; color: var(--muted); }
+.breadcrumb [aria-current="page"] { color: var(--muted); }
+
+/* Post / prose */
+.post h1 { font-size: 1.6rem; line-height: 1.45; margin: 8px 0 6px; }
+.post-meta { color: var(--muted); font-size: .82rem; margin: 0 0 20px; }
+.prose { font-size: 1rem; }
+.prose h2 { font-size: 1.3rem; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--bg-soft); }
+.prose h3 { font-size: 1.1rem; margin: 24px 0 8px; }
+.prose p, .prose ul, .prose ol { margin: 0 0 14px; }
+.prose a { word-break: break-word; }
+.prose blockquote { margin: 16px 0; padding: 8px 16px; border-left: 4px solid var(--border); background: var(--bg-soft); color: var(--muted); border-radius: 0 6px 6px 0; }
+.prose code { background: var(--bg-soft); padding: 1px 5px; border-radius: 4px; font-size: .9em; }
+.prose table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .9rem; display: block; overflow-x: auto; }
+.prose th, .prose td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top; }
+.prose thead th { background: var(--bg-soft); }
+.prose hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+/* Author box */
+.authorbox { margin: 32px 0 0; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-soft); }
+.authorbox-name { font-weight: 700; margin: 0 0 4px; }

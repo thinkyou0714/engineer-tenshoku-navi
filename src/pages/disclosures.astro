@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../data/site';
+---
+<BaseLayout title="広告掲載について" description="本サイトの広告・提携先の表示方針。" path="/disclosures">
+  <h1>広告掲載について</h1>
+
+  <p>{SITE.disclosure}</p>
+
+  <h2>提携先</h2>
+  <p>本サイトは、各ASP(アフィリエイト・サービス・プロバイダ)を通じて、転職エージェント・スカウトサービス等と
+  提携しています。具体的な提携サービス名は各記事の冒頭の開示で示します。</p>
+  <p class="small">※提携サービスの一覧は、提携状況に合わせて更新してください(<code>src/pages/disclosures.astro</code>)。</p>
+
+  <h2>表示の方針</h2>
+  <ul>
+    <li>広告を含む記事には、冒頭に「本記事について」の開示を表示します。</li>
+    <li>サイト全ページの上部に広告を含む旨のバナーを表示します。</li>
+    <li>外部・アフィリエイトリンクには <code>rel="sponsored nofollow"</code> を付与します。</li>
+  </ul>
+
+  <p><a href="/affiliate-policy">アフィリエイトポリシー</a> もあわせてご確認ください。</p>
+</BaseLayout>

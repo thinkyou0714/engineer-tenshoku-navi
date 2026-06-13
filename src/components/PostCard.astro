@@ -1,0 +1,14 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  kind: 'pillar' | 'cluster';
+}
+const { href, title, description, kind } = Astro.props;
+---
+<article class="card">
+  <span class={`badge badge-${kind}`}>{kind === 'pillar' ? '完全ガイド' : '記事'}</span>
+  <h2><a href={href}>{title}</a></h2>
+  <p>{description}</p>
+</article>

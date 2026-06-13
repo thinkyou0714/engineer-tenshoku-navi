@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { websiteSchema, organizationSchema } from '../utils/schema';
+import { SITE } from '../data/site';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const pillar = posts.find((p) => p.data.kind === 'pillar');
+const clusters = posts.filter((p) => p.data.kind === 'cluster');
+const schemas = [websiteSchema(), organizationSchema()];
+---
+<BaseLayout title={SITE.name} description={SITE.description} path="/" schemas={schemas}>
+  <section class="hero">
+    <h1>{SITE.name}</h1>
+    <p>{SITE.description}</p>
+  </section>
+
+  {pillar && (
+    <section>
+      <h2>まずはここから</h2>
+      <PostCard
+        href={`/guide/${pillar.id}`}
+        title={pillar.data.title}
+        description={pillar.data.description}
+        kind="pillar"
+      />
+    </section>
+  )}
+
+  <section>
+    <h2>記事一覧</h2>
+    <div class="grid">
+      {clusters.map((p) => (
+        <PostCard
+          href={`/guide/${p.id}`}
+          title={p.data.title}
+          description={p.data.description}
+          kind="cluster"
+        />
+      ))}
+    </div>
+  </section>
+</BaseLayout>
