@@ -4,13 +4,15 @@ interface Props {
   items: Crumb[];
 }
 const { items } = Astro.props;
+const base = import.meta.env.BASE_URL; // e.g. "/engineer-tenshoku-navi/"
+const href = (u: string) => (u === '/' ? base : base.replace(/\/$/, '') + u);
 ---
 <nav class="breadcrumb" aria-label="パンくずリスト">
   <ol>
     {items.map((it, i) => (
       <li>
         {it.url && i < items.length - 1
-          ? <a href={it.url}>{it.name}</a>
+          ? <a href={href(it.url)}>{it.name}</a>
           : <span aria-current="page">{it.name}</span>}
       </li>
     ))}

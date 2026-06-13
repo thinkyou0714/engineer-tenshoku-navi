@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-# Replace the host below with your production domain.
-Sitemap: https://engineer-tenshoku-navi.vercel.app/sitemap-index.xml
+# Replace the host/path below with your production domain when you move off Pages.
+Sitemap: https://thinkyou0714.github.io/engineer-tenshoku-navi/sitemap-index.xml

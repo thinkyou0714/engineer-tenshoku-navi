@@ -1,7 +1,9 @@
 import { SITE } from '../data/site';
 import type { Crumb, Faq } from '../data/site';
 
-const abs = (path: string) => new URL(path, SITE.url).href;
+// SITE.url already includes the base path, so concatenate (new URL with an absolute
+// path would drop the base).
+const abs = (path: string) => SITE.url + (path.startsWith('/') ? path : '/' + path);
 
 export function organizationSchema() {
   return {

@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { personSchema, organizationSchema } from '../utils/schema';
 import { SITE } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const schemas = [personSchema(), organizationSchema()];
 ---
 <BaseLayout title="運営者情報" description={`${SITE.name}の運営方針・編集体制・免責事項。`} path="/about" schemas={schemas}>
@@ -26,5 +27,5 @@ const schemas = [personSchema(), organizationSchema()];
   <p>掲載情報は作成時点のもので、正確性・最新性・有用性を保証しません。各社の最新情報・規約を必ずご確認ください。
   本サイトは法的助言ではありません。最終判断はご自身の責任で行ってください。</p>
 
-  <p><a href="/affiliate-policy">アフィリエイトポリシー</a> ・ <a href="/disclosures">広告掲載について</a> ・ <a href="/privacy">プライバシーポリシー</a></p>
+  <p><a href={`${base}/affiliate-policy`}>アフィリエイトポリシー</a> ・ <a href={`${base}/disclosures`}>広告掲載について</a> ・ <a href={`${base}/privacy`}>プライバシーポリシー</a></p>
 </BaseLayout>

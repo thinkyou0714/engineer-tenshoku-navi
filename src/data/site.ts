@@ -4,8 +4,11 @@ export const SITE = {
   tagline: 'エンジニア/IT転職の比較・選び方を、事実ベースで',
   description:
     'エンジニア・IT職の転職エージェント/スカウトを、成果条件・対象者・特徴で中立に比較。誇大表現や偽レビューを使わず、公式情報と公開データで選び方を解説します。',
-  // TODO: replace with your real domain (Vercel/own). Must match astro.config `site`.
-  url: 'https://engineer-tenshoku-navi.vercel.app',
+  // GitHub Pages project site (preview). For a custom domain, set origin to the domain,
+  // base to '', and url to origin — and update astro.config `site`/`base` + robots.txt.
+  origin: 'https://thinkyou0714.github.io',
+  base: '/engineer-tenshoku-navi',
+  url: 'https://thinkyou0714.github.io/engineer-tenshoku-navi',
   lang: 'ja',
   locale: 'ja_JP',
   author: {

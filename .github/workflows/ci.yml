@@ -45,9 +45,10 @@ jobs:
       - name: Internal link check (/guide/* targets exist)
         run: |
           miss=0
-          for href in $(grep -rhoE 'href="/guide/[a-z0-9-]+"' dist/ \
+          for href in $(grep -rhoE 'href="/engineer-tenshoku-navi/guide/[a-z0-9-]+"' dist/ \
                         | sed -E 's/.*href="([^"]+)".*/\1/' | sort -u); do
-            [ -f "dist${href}/index.html" ] || { echo "broken internal link: $href"; miss=$((miss+1)); }
+            rel="${href#/engineer-tenshoku-navi}"
+            [ -f "dist${rel}/index.html" ] || { echo "broken internal link: $href"; miss=$((miss+1)); }
           done
           [ "$miss" -eq 0 ] || { echo "::error::$miss broken internal link(s)"; exit 1; }
           echo "OK: internal /guide links resolve"

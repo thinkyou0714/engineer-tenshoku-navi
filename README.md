@@ -64,8 +64,14 @@ npm run build
 ```
 
 ## デプロイ
-- **Vercel（推奨）**: リポジトリを import するだけ（Astro 自動検出、`vercel.json` でセキュリティヘッダ付与）。`site`/`url` を本番ドメインに。
+- **GitHub Pages（現在の公開先）**: `main` への push で `.github/workflows/deploy.yml`（`withastro/action`）が
+  自動ビルド・公開。ライブURL: `https://thinkyou0714.github.io/engineer-tenshoku-navi/`。
+  base path 対応済み（`astro.config.mjs` の `base`、内部リンク/canonical/sitemap すべて base-aware）。
+- **独自ドメイン / Vercel（本番推奨）に移行する場合**:
+  1. `astro.config.mjs` の `base` を `'/'`、`site` を本番ドメインに。
+  2. `src/data/site.ts` の `origin`/`base`/`url`、`public/robots.txt` の Sitemap URL を更新。
+  3. Vercel に import（`vercel.json` でセキュリティヘッダ付与）。`.github/workflows/ci.yml` の内部リンク検査の
+     base prefix（`/engineer-tenshoku-navi`）も併せて調整。
 - 任意の静的ホスト: `npm run build` の `dist/` を配信。
-- GitHub Pages を使う場合は base path 対応が必要（内部リンクは現在ルート絶対パス前提）。
 
 将来の改善は [ROADMAP.md](./ROADMAP.md)。

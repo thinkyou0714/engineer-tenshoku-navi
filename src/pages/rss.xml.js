@@ -14,7 +14,7 @@ export async function GET(context) {
         title: p.data.title,
         description: p.data.description,
         pubDate: p.data.publishDate,
-        link: `/guide/${p.id}`,
+        link: `${import.meta.env.BASE_URL.replace(/\/$/, '')}/guide/${p.id}`,
       })),
   });
 }

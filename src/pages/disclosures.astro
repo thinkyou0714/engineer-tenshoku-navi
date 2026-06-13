@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <BaseLayout title="広告掲載について" description="本サイトの広告・提携先の表示方針。" path="/disclosures">
   <h1>広告掲載について</h1>
@@ -19,5 +20,5 @@ import { SITE } from '../data/site';
     <li>外部・アフィリエイトリンクには <code>rel="sponsored nofollow"</code> を付与します。</li>
   </ul>
 
-  <p><a href="/affiliate-policy">アフィリエイトポリシー</a> もあわせてご確認ください。</p>
+  <p><a href={`${base}/affiliate-policy`}>アフィリエイトポリシー</a> もあわせてご確認ください。</p>
 </BaseLayout>

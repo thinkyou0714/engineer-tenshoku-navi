@@ -1,13 +1,14 @@
 ---
 import { SITE } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <header class="site-header">
   <div class="container header-inner">
-    <a href="/" class="brand">{SITE.name}</a>
+    <a href={`${base}/`} class="brand">{SITE.name}</a>
     <nav aria-label="メイン">
-      <a href="/">ホーム</a>
-      <a href="/guide/pillar-engineer-tenshoku-guide">完全ガイド</a>
-      <a href="/about">運営者</a>
+      <a href={`${base}/`}>ホーム</a>
+      <a href={`${base}/guide/pillar-engineer-tenshoku-guide`}>完全ガイド</a>
+      <a href={`${base}/about`}>運営者</a>
     </nav>
   </div>
 </header>

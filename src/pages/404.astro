@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 <BaseLayout title="ページが見つかりません" path="/404" noindex={true}>
   <h1>ページが見つかりません（404）</h1>
   <p>お探しのページは移動または削除された可能性があります。</p>
-  <p><a href="/">ホームに戻る</a></p>
+  <p><a href={`${base}/`}>ホームに戻る</a></p>
 </BaseLayout>

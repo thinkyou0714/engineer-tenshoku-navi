@@ -1,14 +1,15 @@
 ---
 import { SITE } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const year = 2026;
 ---
 <footer class="site-footer">
   <div class="container">
     <nav aria-label="フッター">
-      <a href="/about">運営者情報</a>
-      <a href="/affiliate-policy">アフィリエイトポリシー</a>
-      <a href="/disclosures">広告掲載について</a>
-      <a href="/privacy">プライバシーポリシー</a>
+      <a href={`${base}/about`}>運営者情報</a>
+      <a href={`${base}/affiliate-policy`}>アフィリエイトポリシー</a>
+      <a href={`${base}/disclosures`}>広告掲載について</a>
+      <a href={`${base}/privacy`}>プライバシーポリシー</a>
     </nav>
     <p class="small">{SITE.disclosure}</p>
     <p class="small">本サイトの情報は作成時点のもので、正確性・最新性を保証しません。各社公式の最新情報をご確認ください。法的助言ではありません。</p>
