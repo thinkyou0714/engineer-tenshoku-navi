@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+interface Props {
+  currentId: string;
+}
+const { currentId } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const related = (await getCollection('posts', ({ data }) => !data.draft))
+  .filter((p) => p.id !== currentId)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 5);
+---
+{related.length > 0 && (
+  <aside class="related" aria-label="関連記事">
+    <h2>関連記事</h2>
+    <ul>
+      {related.map((p) => (
+        <li><a href={`${base}/guide/${p.id}`}>{p.data.title}</a></li>
+      ))}
+    </ul>
+  </aside>
+)}

@@ -86,3 +86,17 @@ a:hover { color: var(--accent-dark); }
 /* Author box */
 .authorbox { margin: 32px 0 0; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-soft); }
 .authorbox-name { font-weight: 700; margin: 0 0 4px; }
+
+/* Related posts */
+.related { margin: 28px 0 0; padding-top: 16px; border-top: 1px solid var(--border); }
+.related h2 { font-size: 1.15rem; margin: 0 0 8px; }
+.related ul { padding-left: 1.2em; margin: 0; }
+.related li { margin: 5px 0; }
+
+/* Consent banner */
+.consent { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: #1a1a1a; color: #fff;
+  padding: 12px 16px; font-size: .85rem; display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.consent a { color: #9ec5ff; }
+.consent button { font-size: .85rem; padding: 6px 14px; border-radius: 6px; border: 1px solid #555; cursor: pointer; }
+.consent .ok { background: var(--accent); color: #fff; border-color: var(--accent); }
+.consent .no { background: transparent; color: #ddd; }

@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import AuthorBox from '../components/AuthorBox.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
 import { articleSchema, breadcrumbSchema, faqSchema } from '../utils/schema';
 import { SITE } from '../data/site';
 import type { Faq } from '../data/site';
@@ -10,11 +11,12 @@ interface Props {
   title: string;
   description: string;
   path: string;
+  slug: string;
   publishDate: Date;
   updatedDate?: Date;
   faq?: Faq[];
 }
-const { title, description, path, publishDate, updatedDate, faq } = Astro.props;
+const { title, description, path, slug, publishDate, updatedDate, faq } = Astro.props;
 
 const iso = (d: Date) => d.toISOString();
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
@@ -45,5 +47,6 @@ const schemas = [
       <slot />
     </div>
     <AuthorBox />
+    <RelatedPosts currentId={slug} />
   </article>
 </BaseLayout>

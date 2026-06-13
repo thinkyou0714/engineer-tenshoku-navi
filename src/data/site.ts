@@ -1,14 +1,17 @@
-// Single source of site-wide config. Replace placeholders before launch.
+// Single source of site-wide config. origin/base/url are DERIVED from astro.config
+// (which is env-driven), so moving to a custom domain needs no edit here — just set
+// SITE_URL / SITE_BASE env vars. See README.
+const _origin = (import.meta.env.SITE ?? 'https://thinkyou0714.github.io').replace(/\/$/, '');
+const _base = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
+
 export const SITE = {
   name: 'エンジニア転職ナビ',
   tagline: 'エンジニア/IT転職の比較・選び方を、事実ベースで',
   description:
     'エンジニア・IT職の転職エージェント/スカウトを、成果条件・対象者・特徴で中立に比較。誇大表現や偽レビューを使わず、公式情報と公開データで選び方を解説します。',
-  // GitHub Pages project site (preview). For a custom domain, set origin to the domain,
-  // base to '', and url to origin — and update astro.config `site`/`base` + robots.txt.
-  origin: 'https://thinkyou0714.github.io',
-  base: '/engineer-tenshoku-navi',
-  url: 'https://thinkyou0714.github.io/engineer-tenshoku-navi',
+  origin: _origin,
+  base: _base,
+  url: _origin + _base,
   lang: 'ja',
   locale: 'ja_JP',
   author: {

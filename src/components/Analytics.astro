@@ -1,0 +1,52 @@
+---
+// Opt-in GA4: renders nothing unless PUBLIC_GA_ID is set, and GA loads ONLY after the
+// visitor clicks 同意 (consent stored in localStorage). Privacy-respecting by default.
+const GA_ID = import.meta.env.PUBLIC_GA_ID;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+{GA_ID && (
+  <>
+    <div id="consent" class="consent" hidden role="dialog" aria-label="Cookie同意">
+      <span>分析のためCookieを使用します。詳細は<a href={`${base}/privacy`}>プライバシーポリシー</a>。</span>
+      <button class="ok" id="consent-ok" type="button">同意する</button>
+      <button class="no" id="consent-no" type="button">拒否する</button>
+    </div>
+    <script is:inline define:vars={{ GA_ID }}>
+      (function () {
+        var KEY = 'consent-ga';
+        var banner = document.getElementById('consent');
+        function loadGA() {
+          if (window.__gaLoaded) return;
+          window.__gaLoaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+          document.head.appendChild(s);
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { window.dataLayer.push(arguments); }
+          window.gtag = gtag;
+          gtag('js', new Date());
+          gtag('config', GA_ID);
+        }
+        var choice = null;
+        try { choice = localStorage.getItem(KEY); } catch (e) {}
+        if (choice === 'granted') {
+          loadGA();
+        } else if (choice !== 'denied' && banner) {
+          banner.hidden = false;
+        }
+        var ok = document.getElementById('consent-ok');
+        var no = document.getElementById('consent-no');
+        if (ok) ok.addEventListener('click', function () {
+          try { localStorage.setItem(KEY, 'granted'); } catch (e) {}
+          if (banner) banner.hidden = true;
+          loadGA();
+        });
+        if (no) no.addEventListener('click', function () {
+          try { localStorage.setItem(KEY, 'denied'); } catch (e) {}
+          if (banner) banner.hidden = true;
+        });
+      })();
+    </script>
+  </>
+)}

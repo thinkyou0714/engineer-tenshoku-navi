@@ -15,6 +15,12 @@
 - CI gate: compliance-lint（検出数:0 必須）+ build + 外部リンク rel=sponsored 検査 + 内部リンク存在検査。
 - セキュリティヘッダ（`vercel.json`: HSTS/X-Content-Type-Options/Referrer-Policy/X-Frame-Options/Permissions-Policy）。
 
+## Phase 2 実装済み (2026-06-13)
+- 記事 7 → **12本**(30代/40代ハイクラス/年収交渉/職務経歴書/スクール選び)。
+- **関連記事**(各記事末・内部リンク)・**目次は将来**。
+- **GA4(同意制 opt-in)**: `PUBLIC_GA_ID` 設定時のみ、同意後に読込。privacy.astro 反映。
+- **env 駆動の base/site**: `SITE_URL`/`SITE_BASE` でドメイン移行が2環境変数(site.ts 自動追従)。
+
 ## 次以降（Tier-next・未実装）
 | テーマ | アイデア | 目安 Impact/Effort |
 |---|---|---|

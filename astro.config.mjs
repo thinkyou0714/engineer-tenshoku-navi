@@ -3,11 +3,12 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import rehypeExternalLinks from 'rehype-external-links';
 
-// Deploy target: GitHub Pages project site → served under a base path.
-//   live (preview): https://thinkyou0714.github.io/engineer-tenshoku-navi
-// To move to a custom domain / Vercel (root path): set BASE = '/', set `site`
-// to your domain, and update src/data/site.ts + public/robots.txt to match.
-const BASE = '/engineer-tenshoku-navi';
+// Deploy target is env-driven, so moving to a custom domain / Vercel is 2 env vars:
+//   GitHub Pages (default): SITE_URL unset, SITE_BASE unset
+//   Vercel / custom domain (root): SITE_URL=https://your-domain  SITE_BASE=""
+// src/data/site.ts derives origin/base/url from these automatically.
+const SITE_URL = process.env.SITE_URL ?? 'https://thinkyou0714.github.io';
+const BASE = process.env.SITE_BASE ?? '/engineer-tenshoku-navi';
 
 // Prefix root-relative markdown links (e.g. /guide/foo) with the base path so they
 // resolve correctly under the Pages subpath. (Astro does not rewrite markdown links.)
@@ -25,7 +26,7 @@ function rehypeBaseLinks() {
 }
 
 export default defineConfig({
-  site: 'https://thinkyou0714.github.io',
+  site: SITE_URL,
   base: BASE,
   output: 'static',
   trailingSlash: 'ignore',
