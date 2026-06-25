@@ -1,6 +1,7 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import { SITE } from '../data/site';
+import { getBaseUrl } from '../utils/env';
 
 export async function GET(context) {
   const posts = await getCollection('posts', ({ data }) => !data.draft);
@@ -14,7 +15,7 @@ export async function GET(context) {
         title: p.data.title,
         description: p.data.description,
         pubDate: p.data.publishDate,
-        link: `${import.meta.env.BASE_URL.replace(/\/$/, '')}/guide/${p.id}`,
+        link: `${getBaseUrl()}/guide/${p.id}`,
       })),
   });
 }

@@ -1,8 +1,10 @@
 // Single source of site-wide config. origin/base/url are DERIVED from astro.config
 // (which is env-driven), so moving to a custom domain needs no edit here — just set
 // SITE_URL / SITE_BASE env vars. See README.
+import { getBaseUrl } from '../utils/env';
+
 const _origin = (import.meta.env.SITE ?? 'https://thinkyou0714.github.io').replace(/\/$/, '');
-const _base = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '');
+const _base = getBaseUrl();
 
 export const SITE = {
   name: 'エンジニア転職ナビ',

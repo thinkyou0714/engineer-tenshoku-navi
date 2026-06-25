@@ -1,10 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
+import { getBaseUrl } from '../utils/env';
+
 interface Props {
   currentId: string;
 }
 const { currentId } = Astro.props;
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const base = getBaseUrl();
 const related = (await getCollection('posts', ({ data }) => !data.draft))
   .filter((p) => p.id !== currentId)
   .sort((a, b) => a.data.order - b.data.order)

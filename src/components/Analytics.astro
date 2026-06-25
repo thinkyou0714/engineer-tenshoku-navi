@@ -1,8 +1,10 @@
 ---
 // Opt-in GA4: renders nothing unless PUBLIC_GA_ID is set, and GA loads ONLY after the
 // visitor clicks 同意 (consent stored in localStorage). Privacy-respecting by default.
+import { getBaseUrl } from '../utils/env';
+
 const GA_ID = import.meta.env.PUBLIC_GA_ID;
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const base = getBaseUrl();
 ---
 {GA_ID && (
   <>

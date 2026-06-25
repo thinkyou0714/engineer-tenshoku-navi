@@ -1,6 +1,8 @@
 ---
 import { SITE } from '../data/site';
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+import { getBaseUrl } from '../utils/env';
+
+const base = getBaseUrl();
 const year = 2026;
 ---
 <footer class="site-footer">
