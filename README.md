@@ -77,3 +77,16 @@ npm run build
 - 任意の静的ホスト: `npm run build` の `dist/` を配信。
 
 将来の改善は [ROADMAP.md](./ROADMAP.md)。
+
+## Claude Code で開発する (web / cloud 対応)
+
+このリポジトリは **Claude Code on the web** に対応しています。
+
+- 依存は `.claude/bootstrap.sh`（SessionStart フック）が `npm ci` で自動インストール。
+- クラウドセッションは `AGENTS.md` と `.claude/skills/`（例: `build-site`）を自動ロード。
+- MCP は本リポジトリではローカル専用。詳細は
+  [`.github/docs/claude-code-web-readiness.md`](https://github.com/thinkyou0714/.github/blob/main/docs/claude-code-web-readiness.md)。
+
+## License
+
+MIT — see [LICENSE](./LICENSE).
