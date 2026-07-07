@@ -238,11 +238,7 @@ const description =
         }
       });
 
-      // 公式リンク準備中のCTAは遷移させない
-      document.addEventListener('click', function (e) {
-        var t = e.target && e.target.closest ? e.target.closest('[data-offer-pending]') : null;
-        if (t) e.preventDefault();
-      });
+      // 公式リンク準備中CTAの遷移抑止は BaseLayout の全ページ共通スクリプトが担う。
     })();
   </script>
 </BaseLayout>

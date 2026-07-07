@@ -29,10 +29,10 @@ npm run preview
 2. **運営者情報（E-E-A-T）**: `src/data/site.ts` の `author`（氏名・経歴・`sameAs`）を **実在の情報** に置換。
    **捏造はしない**（経歴が無ければ「比較・調査ベース」のまま）。
 3. **ドメイン移行**(任意): 環境変数 `SITE_URL=https://ドメイン` + `SITE_BASE=`(空) を設定するだけ
-   (`src/data/site.ts` は自動追従、canonical/sitemap/内部リンクも切替)。`public/robots.txt` の Sitemap URL も更新。
-6. **アクセス解析**(任意): `PUBLIC_GA_ID=G-XXXXXXXXXX` を設定すると**同意制のGA4**が有効化(未設定なら解析なし・バナーも非表示)。`.env.example` 参照。
-4. **実体験**: 各記事の `<!-- TODO(実体験) -->` は、本当の経験がある場合のみ本文に起こす（無ければ削除）。
-5. 公開前に `npm run build` + 下記コンプラチェック + **人間の最終目視**。
+   (`src/data/site.ts` は自動追従、canonical/sitemap/内部リンク/robots.txt もビルド時に切替)。
+4. **アクセス解析**(任意): `PUBLIC_GA_ID=G-XXXXXXXXXX` を設定すると**同意制のGA4**が有効化(未設定なら解析なし・バナーも非表示)。`.env.example` 参照。
+5. **実体験**: 本当の利用経験ができたら本文に追記し、frontmatter の `updatedDate` を更新する(架空体験は書かない)。
+6. 公開前に `npm run build` + 下記コンプラチェック + **人間の最終目視**。
 
 ## ディレクトリ
 ```

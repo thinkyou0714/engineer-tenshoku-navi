@@ -82,10 +82,13 @@ function rehypeOfferLinks() {
             node.properties.target = '_blank';
             node.properties.dataOffer = id;
           } else {
-            // Pending: keep the current placeholder look & behavior.
+            // Pending: placeholder until the ASP URL is filled in. A tiny global
+            // script in BaseLayout prevents the default "#" jump; aria-disabled
+            // tells assistive tech the link is not yet actionable.
             node.properties.href = '#';
             node.properties.dataOffer = id;
             node.properties.dataOfferPending = '';
+            node.properties.ariaDisabled = 'true';
           }
         }
       }

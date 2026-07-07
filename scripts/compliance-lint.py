@@ -200,8 +200,7 @@ def build_report(findings):
         lines.append("")
     lines.append("---")
     lines.append(
-        "> 言い換え例は `references/ng-expressions.md`"
-        "(薬機法=Section1 / 景表法=Section2 / 特商法=Section3 / 承認率=Section4)を参照。"
+        "> NG表現の言い換え方針は README の「コンプライアンス」節と ROADMAP.md を参照。"
         "機械チェックは取りこぼすため、最後に人間が30秒目視してから公開。")
     return "\n".join(lines).rstrip() + "\n"
 
@@ -265,8 +264,8 @@ def selftest():
         record(any(f["category"] == "yakukiho" for f in new_findings),
                "newly added pattern flags 「肌が生まれ変わる」 as 薬機法")
 
-        record("ng-expressions.md" in report,
-               "report footer points users to ng-expressions.md")
+        record("コンプライアンス" in report,
+               "report footer points users to the README compliance section")
 
     print("SELFTEST: %d/%d PASS" % (passed, total))
     return 0 if passed == total else 1
