@@ -15,6 +15,8 @@ const posts = defineCollection({
     author: z.string().default('henshubu'),
     draft: z.boolean().default(false),
     order: z.number().default(99),
+    // トピックタグ(関連記事のスコアリングに使用。タグアーカイブページは意図的に作らない)。
+    tags: z.array(z.string()).default([]),
     // FAQ は本文にも表示しつつ、FAQPage 構造化データにも使う(可視Q&Aのみ)。
     faq: z
       .array(z.object({ q: z.string(), a: z.string() }))

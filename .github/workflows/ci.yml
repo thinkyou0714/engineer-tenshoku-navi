@@ -44,6 +44,12 @@ jobs:
           fi
           echo "OK: all external links carry rel=sponsored"
 
+      - name: JSON-LD validation (structured data parses + policy gate)
+        run: node scripts/validate-jsonld.mjs dist
+
+      - name: Orphan page check (all /guide pages reachable from /)
+        run: node scripts/check-orphans.mjs dist
+
       - name: Internal link check (/guide/* targets exist)
         run: |
           # base prefix をビルド成果物の canonical から導出する(ハードコードだと

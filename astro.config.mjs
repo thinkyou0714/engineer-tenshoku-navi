@@ -1,4 +1,5 @@
 // @ts-check
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
@@ -7,17 +8,38 @@ import rehypeExternalLinks from 'rehype-external-links';
 import { loadEnv } from 'vite';
 import { getOffer, offerUrl, isOfferActive } from './src/data/offers.mjs';
 
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
+
 // Merge .env(.production) values into process.env BEFORE anything below reads it.
 // Astro injects .env into import.meta.env only at page-render time, so without this
 // merge, OFFER_URL_* / SITE_URL written in a .env file would apply to .astro pages
 // but NOT to markdown CTA rendering (content sync) — a silent half-applied build.
 {
-  const root = path.dirname(fileURLToPath(import.meta.url));
-  const fileEnv = loadEnv(process.env.NODE_ENV ?? 'production', root, '');
+  const fileEnv = loadEnv(process.env.NODE_ENV ?? 'production', ROOT, '');
   for (const [k, v] of Object.entries(fileEnv)) {
     if (!(k in process.env)) process.env[k] = v;
   }
 }
+
+// Sitemap <lastmod>: map each post slug to updatedDate ?? publishDate, read from the
+// markdown frontmatter at config-load time (the sitemap integration has no access to
+// content collections). Non-post pages get no lastmod (better than a fake one).
+function loadPostLastmods() {
+  /** @type {Map<string, string>} */
+  const map = new Map();
+  const dir = path.join(ROOT, 'src', 'content', 'posts');
+  for (const f of fs.readdirSync(dir)) {
+    if (!f.endsWith('.md')) continue;
+    const fm = fs.readFileSync(path.join(dir, f), 'utf8').match(/^---\n([\s\S]*?)\n---/);
+    if (!fm) continue;
+    const up = fm[1].match(/^updatedDate:\s*['"]?([0-9-]+)/m);
+    const pub = fm[1].match(/^publishDate:\s*['"]?([0-9-]+)/m);
+    const d = (up && up[1]) || (pub && pub[1]);
+    if (d) map.set(f.replace(/\.md$/, ''), new Date(d).toISOString());
+  }
+  return map;
+}
+const POST_LASTMODS = loadPostLastmods();
 
 // NOTE: Astro's content-layer cache keys rendered post HTML by the markdown digest,
 // so offer URL / rehype-plugin changes would not re-render cached posts. `npm run
@@ -100,7 +122,19 @@ export default defineConfig({
   base: BASE,
   output: 'static',
   trailingSlash: 'ignore',
-  integrations: [sitemap()],
+  // 全内部リンクをホバー時に先読みしてナビ体感速度を上げる(追加JSは極小)。
+  // prefetchAll がないと data-astro-prefetch を付けたリンクだけが対象で実質 no-op。
+  prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
+  integrations: [
+    sitemap({
+      serialize(item) {
+        const m = item.url.match(/\/guide\/([a-z0-9-]+)\/?$/);
+        const lastmod = m && POST_LASTMODS.get(m[1]);
+        if (lastmod) item.lastmod = lastmod;
+        return item;
+      },
+    }),
+  ],
   markdown: {
     // resolve offer: CTA links first, then base-prefix internal links, then mark
     // external links sponsored.
