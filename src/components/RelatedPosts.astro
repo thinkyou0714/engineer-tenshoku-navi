@@ -1,14 +1,25 @@
 ---
+// 関連記事: 現在の記事と共有するタグ数でスコアリングして上位5件を出す。
+// (以前は order 昇順の先頭5件で全記事同じリストだった。)同点は order 昇順。
+// タグ未整備の記事でも従来同様のフォールバック(order 順)で必ず5件出る。
 import { getCollection } from 'astro:content';
 interface Props {
   currentId: string;
 }
 const { currentId } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const related = (await getCollection('posts', ({ data }) => !data.draft))
+const all = await getCollection('posts', ({ data }) => !data.draft);
+const current = all.find((p) => p.id === currentId);
+const currentTags = new Set(current?.data.tags ?? []);
+const related = all
   .filter((p) => p.id !== currentId)
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 5);
+  .map((p) => ({
+    post: p,
+    score: p.data.tags.reduce((n, t) => n + (currentTags.has(t) ? 1 : 0), 0),
+  }))
+  .sort((a, b) => b.score - a.score || a.post.data.order - b.post.data.order)
+  .slice(0, 5)
+  .map((r) => r.post);
 ---
 {related.length > 0 && (
   <aside class="related" aria-label="関連記事">

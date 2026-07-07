@@ -1,0 +1,58 @@
+# 外部リンクの死活チェック(週次)。ネットワーク起因でフレークしやすいため
+# PR ブロックにはせず、失敗時に Issue を立てる運用にしている。
+name: Weekly external link check
+
+on:
+  schedule:
+    - cron: '0 21 * * 0' # 毎週月曜 06:00 JST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  linkcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - name: Check external links in dist
+        id: check
+        run: |
+          set -o pipefail
+          urls="$(grep -rhoE '<a [^>]*href="https?://[^"]*"' dist/ \
+                  | sed -E 's/.*href="([^"]+)".*/\1/' | sort -u)"
+          echo "checking $(echo "$urls" | wc -l) unique external URLs"
+          fail=0
+          broken=""
+          for u in $urls; do
+            code="$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 20 \
+                    -A 'Mozilla/5.0 (compatible; link-check)' "$u" || echo 000)"
+            case "$code" in
+              2*|3*) : ;;
+              403|405|429) echo "WARN $code $u (bot-blocked; ignored)" ;;
+              *) echo "BROKEN $code $u"; broken="$broken\n- $code $u"; fail=1 ;;
+            esac
+          done
+          if [ "$fail" -ne 0 ]; then
+            printf 'broken<<EOF\n%b\nEOF\n' "$broken" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+      - name: Open issue on failure
+        if: failure() && steps.check.outputs.broken != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `外部リンク切れ検出 (${new Date().toISOString().slice(0, 10)})`,
+              body: `週次リンクチェックで以下のリンク切れを検出しました:\n${{ toJSON(steps.check.outputs.broken) }}\n\n対応: 記事のリンクを更新するか、リンク先の一時障害なら再実行で確認してください。`,
+              labels: ['link-check'],
+            });

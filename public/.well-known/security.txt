@@ -1,0 +1,4 @@
+# security.txt (RFC 9116)
+Contact: https://github.com/thinkyou0714/engineer-tenshoku-navi/issues
+Preferred-Languages: ja, en
+Expires: 2027-07-01T00:00:00.000Z

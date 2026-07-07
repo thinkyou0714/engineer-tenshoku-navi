@@ -1,5 +1,7 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
+// Astro 6: astro:content からの z の re-export は非推奨 → astro/zod から import する。
+import { z } from 'astro/zod';
 
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/posts' }),
@@ -13,10 +15,15 @@ const posts = defineCollection({
     author: z.string().default('henshubu'),
     draft: z.boolean().default(false),
     order: z.number().default(99),
+    // トピックタグ(関連記事のスコアリングに使用。タグアーカイブページは意図的に作らない)。
+    tags: z.array(z.string()).default([]),
     // FAQ は本文にも表示しつつ、FAQPage 構造化データにも使う(可視Q&Aのみ)。
     faq: z
       .array(z.object({ q: z.string(), a: z.string() }))
       .optional(),
+    // 比較記事のみ: ItemList 構造化データに載せるサービス名の配列。
+    // 名前の羅列のみで Review/AggregateRating には絶対に使わない(サイト方針)。
+    itemList: z.array(z.string()).optional(),
   }),
 });
 
