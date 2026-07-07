@@ -21,21 +21,31 @@
 - **GA4(同意制 opt-in)**: `PUBLIC_GA_ID` 設定時のみ、同意後に読込。privacy.astro 反映。
 - **env 駆動の base/site**: `SITE_URL`/`SITE_BASE` でドメイン移行が2環境変数(site.ts 自動追従)。
 
+## Phase 3 実装済み (2026-07-07)
+- **オファーレジストリ** (`src/data/offers.mjs`): 記事内 `[テキスト](offer:<id>)` → ビルド時に実URL解決。
+  ASP承認後は `url` 記入 or 環境変数 `OFFER_URL_<ID>` の**1箇所で全CTAが実リンク化**(未設定なら `#` のまま)。
+- **アフィリクリック計測**: GA4 `affiliate_click` イベント(`offer_id` / `link_url` / `active`)。同意後のみ・承認前クリックも需要計測可。
+- **CRO**: 診断ページ `/shindan`(自分ごと化 → 該当記事へ誘導)。
+- **記事内 TOC**(`Toc.astro`)+ 比較表の **ItemList 構造化データ**。
+- **記事 12 → 20本**(高intent 8本追加: doda/Geekly/フリーランス比較 等)。
+- **IndexNow 送信スクリプト** (`scripts/indexnow-submit.mjs`): dist/ の sitemap から URL 抽出 → api.indexnow.org へ POST。
+  `INDEXNOW_KEY` 未設定 or `--dry-run` で非破壊確認。
+- **収益化ランブック** (`docs/OPERATIONS.md`): ドメイン移行 → ASP申請 → リンク挿入 → 週次KPI運用の手順書。
+
 ## 次以降（Tier-next・未実装）
 | テーマ | アイデア | 目安 Impact/Effort |
 |---|---|---|
-| 計測 | GA4 + Cookie 同意バナー（同意後ロード）、アフィリクリックをイベント計測 | 4/3 |
 | SEO | 記事ごとの OG 画像（1200×630）自動生成、`updatedDate` の sitemap lastmod 連携（git timestamp） | 4/2 |
-| 構造化データ | 比較表の `ItemList`、`HowTo`(該当時) | 2/2 |
-| 内部リンク | 関連記事サイドバー、目次(TOC)、orphan/アンカー多様性の自動監査 | 4/2-3 |
+| 構造化データ | `HowTo`(該当時)。※比較表の `ItemList` は Phase 3 で済 | 2/2 |
+| 内部リンク | 関連記事サイドバー、orphan/アンカー多様性の自動監査。※目次(TOC)は Phase 3 で済 | 4/2-3 |
 | 性能 | 画像導入時の `<Image>`(AVIF/WebP)・font preload、Lighthouse CI | 4/2-3 |
 | コンプラ | CSP ヘッダ（JSON-LD/インラインに配慮した設計）、`ads.txt` | 3/2 |
-| 配信 | IndexNow（Bing/Yandex）push、Search Console 連携・サイトマップ送信 | 3/1-2 |
-| コンテンツ | 残クラスタ(30代/40代/職務経歴書/年収交渉/診断)、競合SERP差分、コンテンツ更新サイクル | 4/3 |
-| CRO | 年収診断などの自分ごと化コンテンツ、A/Bテストログ | 4/3 |
+| 配信 | Search Console 連携・サイトマップ送信。※IndexNow push は Phase 3 で済（`scripts/indexnow-submit.mjs`） | 3/1-2 |
+| コンテンツ | 競合SERP差分、コンテンツ更新サイクル。※残クラスタ(30代/40代/職務経歴書/年収交渉/診断)は Phase 2–3 で済 | 4/3 |
+| CRO | A/Bテストログ。※診断コンテンツ(/shindan)は Phase 3 で済 | 4/3 |
 | 運用 | rank tracker(API)、リンク切れ定期監査、編集カレンダー | 3/3 |
 | 国際化 | i18n / hreflang（英語展開する場合） | 2/3 |
-| ドメイン | 独自ドメイン取得 + 301、ブランド整備 | 3/1 |
+| ドメイン | 独自ドメイン取得 + 301、ブランド整備（手順は `docs/OPERATIONS.md` §1-1） | 3/1 |
 
 ## 不採用（理由つき）
 - **AI生成コンテンツの自動量産**: 真正性ポリシーと衝突。雛形+人間/事実比較に留める。

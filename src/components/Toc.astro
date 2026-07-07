@@ -1,0 +1,44 @@
+---
+// 記事冒頭の目次(TOC)。render() が返す headings から depth 2 (h2) のみを表示する。
+// h2 が 3 個未満の記事では何も出力しない(短い記事に目次は不要なため)。
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings?: MarkdownHeading[];
+}
+const { headings = [] } = Astro.props;
+const items = headings.filter((h) => h.depth === 2);
+---
+{items.length >= 3 && (
+  <nav class="toc" aria-label="目次">
+    <p class="toc-title">目次</p>
+    <ol>
+      {items.map((h) => (
+        <li><a href={`#${h.slug}`}>{h.text}</a></li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<style>
+  .toc {
+    margin: 0 0 24px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-soft);
+    font-size: 0.92rem;
+  }
+  .toc-title {
+    margin: 0 0 6px;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .toc ol {
+    margin: 0;
+    padding-left: 1.4em;
+  }
+  .toc li {
+    margin: 4px 0;
+  }
+</style>

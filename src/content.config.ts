@@ -17,6 +17,9 @@ const posts = defineCollection({
     faq: z
       .array(z.object({ q: z.string(), a: z.string() }))
       .optional(),
+    // 比較記事のみ: ItemList 構造化データに載せるサービス名の配列。
+    // 名前の羅列のみで Review/AggregateRating には絶対に使わない(サイト方針)。
+    itemList: z.array(z.string()).optional(),
   }),
 });
 

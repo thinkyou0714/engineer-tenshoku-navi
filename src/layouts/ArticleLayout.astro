@@ -3,9 +3,11 @@ import BaseLayout from './BaseLayout.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import AuthorBox from '../components/AuthorBox.astro';
 import RelatedPosts from '../components/RelatedPosts.astro';
-import { articleSchema, breadcrumbSchema, faqSchema } from '../utils/schema';
+import Toc from '../components/Toc.astro';
+import { articleSchema, breadcrumbSchema, faqSchema, itemListSchema } from '../utils/schema';
 import { SITE } from '../data/site';
 import type { Faq } from '../data/site';
+import type { MarkdownHeading } from 'astro';
 
 interface Props {
   title: string;
@@ -15,8 +17,11 @@ interface Props {
   publishDate: Date;
   updatedDate?: Date;
   faq?: Faq[];
+  headings?: MarkdownHeading[];
+  itemList?: string[];
 }
-const { title, description, path, slug, publishDate, updatedDate, faq } = Astro.props;
+const { title, description, path, slug, publishDate, updatedDate, faq, headings, itemList } =
+  Astro.props;
 
 const iso = (d: Date) => d.toISOString();
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
@@ -32,6 +37,8 @@ const schemas = [
   }),
   breadcrumbSchema(crumbs),
   faqSchema(faq),
+  // 比較記事のみ frontmatter の itemList から出力(未指定なら null → graph() が除外)。
+  itemListSchema(itemList),
 ];
 ---
 <BaseLayout title={title} description={description} path={path} ogType="article" schemas={schemas}>
@@ -43,6 +50,7 @@ const schemas = [
       {updatedDate && <> ・ <time datetime={fmt(updatedDate)}>更新 {fmt(updatedDate)}</time></>}
       ・ 執筆 {SITE.author.name}
     </p>
+    <Toc headings={headings} />
     <div class="prose">
       <slot />
     </div>

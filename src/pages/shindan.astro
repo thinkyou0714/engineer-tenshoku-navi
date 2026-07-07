@@ -1,0 +1,334 @@
+---
+// 無料診断ページ(CRO)。4問の回答から、合う可能性のあるサービスと関連記事を提示する。
+// 推薦ロジックはビルド時に全72パターン(3×4×2×3)を評価し、結果が同一になる組み合わせを
+// 1ブロックに集約して事前レンダリングする。クライアント側の is:inline JS は
+// 「回答キー → 該当ブロックの表示切替」だけを行う(外部送信・localStorage なし)。
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { OFFERS, getOffer, offerUrl, isOfferActive } from '../data/offers.mjs';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// 記事リンクの表示用タイトル(並行作業中で未執筆の slug もあるため、ここで静的に持つ)
+const ARTICLE_TITLES = {
+  'cluster-mikeiken-roadmap': '未経験からのエンジニア転職ロードマップ',
+  'cluster-school-erabi': '未経験向けプログラミングスクールの選び方',
+  'cluster-levtech-hyoban': 'レバテックキャリアの評判・特徴ガイド',
+  'cluster-bizreach-highclass': 'ビズリーチでハイクラス転職 — 仕組みと向いている人',
+  'cluster-doda-engineer': 'doda のエンジニア転職ガイド',
+  'cluster-geekly-hyoban': 'Geekly の評判・特徴ガイド',
+  'cluster-freelance-vs-seishain': 'フリーランスと正社員どちらを選ぶかの考え方',
+  'pillar-engineer-tenshoku-guide': 'エンジニア転職 完全ガイド',
+};
+const articleTitle = (slug) => ARTICLE_TITLES[slug] || slug;
+
+// オファーの中立・ヘッジ済み説明文(断定・保証表現は使わない)
+const OFFER_DESC = {
+  levtech: 'ITエンジニア領域を専門とする転職エージェント。担当アドバイザーと相談しながら進めたい人の選択肢になり得ます。',
+  bizreach: 'スカウト型の転職サービス。職務経歴書を登録して届くスカウトを通じて、市場価値の目安を知る使い方が知られています。',
+  doda: '求人数の多い総合型の転職サービス。未経験向け求人を含め、幅広く自分で探したい人の選択肢になり得ます。',
+  geekly: 'IT・Web・ゲーム業界に特化した転職エージェント。この領域での転職を考える人の選択肢になり得ます。',
+  'levtech-freelance': 'ITフリーランス向けの案件紹介サービス。正社員以外の働き方も視野に入れる人向けの選択肢です。',
+};
+
+// 質問定義(値は英数字のみ。回答キーの区切りに "|" を使うため)
+const QUESTIONS = [
+  { name: 'q1', label: 'Q1. 実務経験はどのくらいですか?', options: [
+    { value: 'mikeiken', label: '未経験' },
+    { value: 'junior', label: '1〜2年' },
+    { value: 'senior', label: '3年以上' },
+  ]},
+  { name: 'q2', label: 'Q2. いちばん近い目的はどれですか?', options: [
+    { value: 'salary', label: '年収を上げたい' },
+    { value: 'modern', label: '自社開発・モダン環境へ移りたい' },
+    { value: 'market', label: 'まず市場価値を知りたい' },
+    { value: 'mikeiken', label: '未経験からエンジニアを目指したい' },
+  ]},
+  { name: 'q3', label: 'Q3. 希望する領域はどれに近いですか?', options: [
+    { value: 'web', label: 'Web・ゲーム系' },
+    { value: 'other', label: 'それ以外・こだわらない' },
+  ]},
+  { name: 'q4', label: 'Q4. 進め方の希望はどれに近いですか?', options: [
+    { value: 'hansou', label: '担当者に伴走してほしい' },
+    { value: 'scout', label: 'スカウトを待ちたい' },
+    { value: 'self', label: '幅広く自分で探したい' },
+  ]},
+];
+
+// 推薦ロジック(最大2オファー + 関連記事2本)
+function recommend(q1, q2, q3, q4) {
+  const offers = [];
+  const articles = [];
+  const addOffer = (id) => {
+    if (getOffer(id) && !offers.includes(id) && offers.length < 2) offers.push(id);
+  };
+  const addArticle = (slug) => {
+    if (slug && !articles.includes(slug) && articles.length < 2) articles.push(slug);
+  };
+  const mikeiken = q1 === 'mikeiken' || q2 === 'mikeiken';
+  if (mikeiken) {
+    addOffer('doda');
+    addArticle('cluster-mikeiken-roadmap');
+    addArticle('cluster-school-erabi');
+  }
+  // スカウト型は実務経験が前提のことが多く未経験初期は相性が薄い(cluster-mikeiken-roadmap と整合)
+  if (!mikeiken && (q4 === 'scout' || q2 === 'market')) addOffer('bizreach');
+  if (!mikeiken && q4 === 'hansou') {
+    addOffer('levtech');
+    if (q3 === 'web') addOffer('geekly');
+  }
+  if (q4 === 'self') addOffer('doda');
+  if (offers.length === 0) addOffer('doda'); // 論理上到達しないが安全側のフォールバック
+  for (const id of offers) addArticle(getOffer(id).article);
+  addArticle('pillar-engineer-tenshoku-guide'); // 関連記事が2本に満たない場合の補完
+  return { offers, articles };
+}
+
+// 全パターンを評価し、同一結果をブロックに集約
+const Q1V = QUESTIONS[0].options.map((o) => o.value);
+const Q2V = QUESTIONS[1].options.map((o) => o.value);
+const Q3V = QUESTIONS[2].options.map((o) => o.value);
+const Q4V = QUESTIONS[3].options.map((o) => o.value);
+const blockMap = new Map();
+for (const a of Q1V) for (const b of Q2V) for (const c of Q3V) for (const d of Q4V) {
+  const r = recommend(a, b, c, d);
+  const sig = r.offers.join(',') + '::' + r.articles.join(',');
+  if (!blockMap.has(sig)) blockMap.set(sig, { offers: r.offers, articles: r.articles, combos: [] });
+  blockMap.get(sig).combos.push([a, b, c, d].join('|'));
+}
+const blocks = [...blockMap.values()].map((blk, i) => ({
+  id: `shindan-block-${i}`,
+  offers: blk.offers.map((id) => getOffer(id)),
+  articles: blk.articles,
+  combos: blk.combos,
+}));
+
+const title = 'エンジニア転職サービス診断(無料・30秒)';
+const description =
+  '4つの質問に答えると、あなたに合う可能性のあるエンジニア転職サービスと関連記事の目安を表示します。登録不要・回答データの送信なし。結果は簡易的な目安であり、適合や内定を保証するものではありません。';
+---
+<BaseLayout title={title} description={description} path="/shindan">
+  <div class="hero">
+    <h1>エンジニア転職サービス診断（無料・30秒）</h1>
+  </div>
+  <p class="small">本ページはプロモーション（アフィリエイト広告）を含みます。転職エージェント・スカウトサービスは、登録・基本利用は求職者無料が一般的です（一部サービスには任意の有料プランがあります。費用は主に採用企業が負担。2026年7月時点・詳細は各社公式サイトでご確認ください）。</p>
+  <p>4つの質問に答えると、<strong>あなたに合う可能性のある</strong>転職サービスと関連記事の目安を表示します。回答内容はこのページ内でのみ使われ、<strong>外部への送信や保存は行いません</strong>。</p>
+  <p class="small">※本診断は簡易的な目安であり、サービスとの適合や内定を保証するものではありません。結果には個人差があります。最終的な判断はご自身で各社の公式情報をご確認のうえ行ってください。</p>
+
+  <form id="shindan-form" class="shindan-form">
+    {QUESTIONS.map((q) => (
+      <fieldset>
+        <legend>{q.label}</legend>
+        {q.options.map((opt) => (
+          <label class="shindan-option">
+            <input type="radio" name={q.name} value={opt.value} />
+            <span>{opt.label}</span>
+          </label>
+        ))}
+      </fieldset>
+    ))}
+    <button type="submit" class="shindan-submit">診断結果を見る</button>
+  </form>
+
+  <p id="shindan-prompt" class="shindan-prompt" hidden>未回答の質問があります。4問すべてに回答すると結果が表示されます。</p>
+
+  <div id="shindan-result">
+    {blocks.map((blk) => (
+      <section class="shindan-block" id={blk.id} data-combos={blk.combos.join(' ')} hidden>
+        <h2>診断結果：あなたに合う可能性のあるサービス</h2>
+        <p class="small">※回答から機械的に絞り込んだ簡易的な目安です。適合や内定を保証するものではありません。</p>
+        {blk.offers.map((offer) => (
+          <div class="card shindan-offer">
+            <h3>{offer.name} <span class="badge">{offer.note}</span></h3>
+            <p>{OFFER_DESC[offer.id]}</p>
+            {isOfferActive(offer) ? (
+              <p class="shindan-cta-row">
+                <a class="shindan-cta" href={offerUrl(offer)} rel="sponsored nofollow noopener" target="_blank" data-offer={offer.id}>{offer.cta}</a>
+              </p>
+            ) : (
+              <p class="shindan-cta-row">
+                <a class="shindan-cta shindan-cta-pending" href="#" data-offer={offer.id} data-offer-pending aria-disabled="true">{offer.cta}</a>
+                <span class="small">（公式リンク準備中）</span>
+              </p>
+            )}
+            <p class="small"><a href={`${base}/guide/${offer.article}`}>詳細ガイドを読む</a></p>
+          </div>
+        ))}
+        <h3>あわせて読みたい関連記事</h3>
+        <ul>
+          {blk.articles.map((slug) => (
+            <li><a href={`${base}/guide/${slug}`}>{articleTitle(slug)}</a></li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+
+  <noscript>
+    <section class="shindan-noscript">
+      <h2>サービス・記事一覧（JavaScript が無効の場合）</h2>
+      <p>お使いの環境では対話型の診断が動作しないため、掲載中の全サービスと主要記事を一覧で掲載します。いずれも簡易的な目安であり、適合や内定を保証するものではありません。</p>
+      <ul>
+        {OFFERS.map((offer) => (
+          <li>
+            <strong>{offer.name}</strong> <span class="badge">{offer.note}</span> — {OFFER_DESC[offer.id]}
+            {isOfferActive(offer) ? (
+              <a href={offerUrl(offer)} rel="sponsored nofollow noopener" target="_blank" data-offer={offer.id}>{offer.cta}</a>
+            ) : (
+              <span class="small">（公式リンク準備中）</span>
+            )}
+            <a href={`${base}/guide/${offer.article}`}>詳細ガイドを読む</a>
+          </li>
+        ))}
+      </ul>
+      <h3>主要記事</h3>
+      <ul>
+        <li><a href={`${base}/guide/pillar-engineer-tenshoku-guide`}>{articleTitle('pillar-engineer-tenshoku-guide')}</a></li>
+        <li><a href={`${base}/guide/cluster-mikeiken-roadmap`}>{articleTitle('cluster-mikeiken-roadmap')}</a></li>
+        <li><a href={`${base}/guide/cluster-school-erabi`}>{articleTitle('cluster-school-erabi')}</a></li>
+        <li><a href={`${base}/guide/cluster-bizreach-highclass`}>{articleTitle('cluster-bizreach-highclass')}</a></li>
+        <li><a href={`${base}/guide/cluster-levtech-hyoban`}>{articleTitle('cluster-levtech-hyoban')}</a></li>
+      </ul>
+    </section>
+  </noscript>
+
+  <h2>この診断について</h2>
+  <ul class="small">
+    <li>診断は回答の組み合わせに基づく簡易的な絞り込みで、専門家によるキャリア診断ではありません。</li>
+    <li>結果に表示されるサービスには広告（アフィリエイトリンク）が含まれることがあります。掲載順や表示有無に成果報酬額は影響していません。</li>
+    <li>各サービスの内容・条件は変更されることがあります（2026年7月時点）。最新情報は必ず各社公式サイトでご確認ください。</li>
+  </ul>
+
+  <script is:inline>
+    (function () {
+      var form = document.getElementById('shindan-form');
+      if (!form) return;
+      var prompt = document.getElementById('shindan-prompt');
+      var blocks = document.querySelectorAll('.shindan-block');
+      var names = ['q1', 'q2', 'q3', 'q4'];
+
+      function answerKey() {
+        var vals = [];
+        for (var i = 0; i < names.length; i++) {
+          var el = form.querySelector('input[name="' + names[i] + '"]:checked');
+          if (!el) return null;
+          vals.push(el.value);
+        }
+        return vals.join('|');
+      }
+
+      function render(showPromptIfIncomplete) {
+        var key = answerKey();
+        var shown = null;
+        for (var i = 0; i < blocks.length; i++) {
+          var combos = ' ' + (blocks[i].getAttribute('data-combos') || '') + ' ';
+          var match = !!key && combos.indexOf(' ' + key + ' ') !== -1;
+          blocks[i].hidden = !match;
+          if (match) shown = blocks[i];
+        }
+        if (prompt) prompt.hidden = !(showPromptIfIncomplete && !key);
+        return shown;
+      }
+
+      form.addEventListener('change', function () { render(false); });
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var shown = render(true);
+        if (shown && shown.scrollIntoView) {
+          shown.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+
+      // 公式リンク準備中のCTAは遷移させない
+      document.addEventListener('click', function (e) {
+        var t = e.target && e.target.closest ? e.target.closest('[data-offer-pending]') : null;
+        if (t) e.preventDefault();
+      });
+    })();
+  </script>
+</BaseLayout>
+
+<style>
+  .shindan-form fieldset {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin: 0 0 16px;
+    background: var(--bg);
+  }
+  .shindan-form legend {
+    font-weight: 700;
+    padding: 0 6px;
+  }
+  .shindan-option {
+    display: block;
+    padding: 4px 0;
+    cursor: pointer;
+  }
+  .shindan-option input {
+    margin-right: 8px;
+  }
+  .shindan-submit {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 10px 24px;
+    cursor: pointer;
+  }
+  .shindan-submit:hover {
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+  }
+  .shindan-prompt {
+    background: #fff8e1;
+    border: 1px solid #f0e2b6;
+    color: #5b4b16;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: .9rem;
+  }
+  .shindan-block {
+    margin-top: 24px;
+    padding-top: 8px;
+    border-top: 2px solid var(--bg-soft);
+  }
+  .shindan-offer {
+    margin: 12px 0;
+  }
+  .shindan-offer h3 {
+    margin: 0 0 6px;
+    font-size: 1.05rem;
+  }
+  .shindan-cta-row {
+    margin: 10px 0 6px;
+  }
+  .shindan-cta {
+    display: inline-block;
+    font-weight: 700;
+    color: #fff;
+    background: var(--accent);
+    border-radius: 8px;
+    padding: 8px 20px;
+    text-decoration: none;
+  }
+  .shindan-cta:hover {
+    background: var(--accent-dark);
+    color: #fff;
+  }
+  .shindan-cta-pending {
+    background: var(--muted);
+    cursor: default;
+  }
+  .shindan-cta-pending:hover {
+    background: var(--muted);
+  }
+  .shindan-noscript li {
+    margin: 8px 0;
+  }
+  .shindan-noscript li a {
+    margin-left: 8px;
+  }
+</style>
