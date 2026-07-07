@@ -9,7 +9,7 @@ import { OFFERS, getOffer, offerUrl, isOfferActive } from '../data/offers.mjs';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 // 記事リンクの表示用タイトル(並行作業中で未執筆の slug もあるため、ここで静的に持つ)
-const ARTICLE_TITLES = {
+const ARTICLE_TITLES: Record<string, string> = {
   'cluster-mikeiken-roadmap': '未経験からのエンジニア転職ロードマップ',
   'cluster-school-erabi': '未経験向けプログラミングスクールの選び方',
   'cluster-levtech-hyoban': 'レバテックキャリアの評判・特徴ガイド',
@@ -19,10 +19,10 @@ const ARTICLE_TITLES = {
   'cluster-freelance-vs-seishain': 'フリーランスと正社員どちらを選ぶかの考え方',
   'pillar-engineer-tenshoku-guide': 'エンジニア転職 完全ガイド',
 };
-const articleTitle = (slug) => ARTICLE_TITLES[slug] || slug;
+const articleTitle = (slug: string) => ARTICLE_TITLES[slug] || slug;
 
 // オファーの中立・ヘッジ済み説明文(断定・保証表現は使わない)
-const OFFER_DESC = {
+const OFFER_DESC: Record<string, string> = {
   levtech: 'ITエンジニア領域を専門とする転職エージェント。担当アドバイザーと相談しながら進めたい人の選択肢になり得ます。',
   bizreach: 'スカウト型の転職サービス。職務経歴書を登録して届くスカウトを通じて、市場価値の目安を知る使い方が知られています。',
   doda: '求人数の多い総合型の転職サービス。未経験向け求人を含め、幅広く自分で探したい人の選択肢になり得ます。',
@@ -55,13 +55,13 @@ const QUESTIONS = [
 ];
 
 // 推薦ロジック(最大2オファー + 関連記事2本)
-function recommend(q1, q2, q3, q4) {
-  const offers = [];
-  const articles = [];
-  const addOffer = (id) => {
+function recommend(q1: string, q2: string, q3: string, q4: string) {
+  const offers: string[] = [];
+  const articles: string[] = [];
+  const addOffer = (id: string) => {
     if (getOffer(id) && !offers.includes(id) && offers.length < 2) offers.push(id);
   };
-  const addArticle = (slug) => {
+  const addArticle = (slug?: string) => {
     if (slug && !articles.includes(slug) && articles.length < 2) articles.push(slug);
   };
   const mikeiken = q1 === 'mikeiken' || q2 === 'mikeiken';
@@ -78,7 +78,7 @@ function recommend(q1, q2, q3, q4) {
   }
   if (q4 === 'self') addOffer('doda');
   if (offers.length === 0) addOffer('doda'); // 論理上到達しないが安全側のフォールバック
-  for (const id of offers) addArticle(getOffer(id).article);
+  for (const id of offers) addArticle(getOffer(id)?.article);
   addArticle('pillar-engineer-tenshoku-guide'); // 関連記事が2本に満たない場合の補完
   return { offers, articles };
 }
@@ -88,16 +88,18 @@ const Q1V = QUESTIONS[0].options.map((o) => o.value);
 const Q2V = QUESTIONS[1].options.map((o) => o.value);
 const Q3V = QUESTIONS[2].options.map((o) => o.value);
 const Q4V = QUESTIONS[3].options.map((o) => o.value);
-const blockMap = new Map();
+type Block = { offers: string[]; articles: string[]; combos: string[] };
+const blockMap = new Map<string, Block>();
 for (const a of Q1V) for (const b of Q2V) for (const c of Q3V) for (const d of Q4V) {
   const r = recommend(a, b, c, d);
   const sig = r.offers.join(',') + '::' + r.articles.join(',');
   if (!blockMap.has(sig)) blockMap.set(sig, { offers: r.offers, articles: r.articles, combos: [] });
-  blockMap.get(sig).combos.push([a, b, c, d].join('|'));
+  blockMap.get(sig)!.combos.push([a, b, c, d].join('|'));
 }
 const blocks = [...blockMap.values()].map((blk, i) => ({
   id: `shindan-block-${i}`,
-  offers: blk.offers.map((id) => getOffer(id)),
+  // recommend() は実在する id しか追加しない(addOffer が getOffer で検証)ため non-null。
+  offers: blk.offers.map((id) => getOffer(id)!),
   articles: blk.articles,
   combos: blk.combos,
 }));

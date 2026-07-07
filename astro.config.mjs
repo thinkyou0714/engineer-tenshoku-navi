@@ -1,12 +1,11 @@
 // @ts-check
-import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import rehypeExternalLinks from 'rehype-external-links';
 import { loadEnv } from 'vite';
-import { OFFERS, getOffer, offerUrl, isOfferActive } from './src/data/offers.mjs';
+import { getOffer, offerUrl, isOfferActive } from './src/data/offers.mjs';
 
 // Merge .env(.production) values into process.env BEFORE anything below reads it.
 // Astro injects .env into import.meta.env only at page-render time, so without this
@@ -20,30 +19,10 @@ import { OFFERS, getOffer, offerUrl, isOfferActive } from './src/data/offers.mjs
   }
 }
 
-// Astro's content-layer cache stores rendered post HTML keyed only by each markdown
-// file's digest, so changing a resolved offer URL (OFFER_URL_* env var or offers.mjs
-// edit) would NOT re-render unchanged posts. Bust the cache whenever the resolved
-// offer set changes, so "fill in the URL → npm run build" always takes effect.
-// Best-effort: on failure, `astro build --force` is the manual fallback.
-function bustContentCacheOnOfferChange() {
-  const root = path.dirname(fileURLToPath(import.meta.url));
-  const fingerprint = JSON.stringify(OFFERS.map((o) => [o.id, offerUrl(o)]));
-  const marker = path.join(root, 'node_modules', '.astro', 'offers-fingerprint.json');
-  try {
-    if (fs.existsSync(marker) && fs.readFileSync(marker, 'utf8') === fingerprint) return;
-    for (const store of [
-      path.join(root, 'node_modules', '.astro', 'data-store.json'),
-      path.join(root, '.astro', 'data-store.json'),
-    ]) {
-      if (fs.existsSync(store)) fs.rmSync(store);
-    }
-    fs.mkdirSync(path.dirname(marker), { recursive: true });
-    fs.writeFileSync(marker, fingerprint);
-  } catch {
-    /* never fail the build over cache maintenance */
-  }
-}
-bustContentCacheOnOfferChange();
+// NOTE: Astro's content-layer cache keys rendered post HTML by the markdown digest,
+// so offer URL / rehype-plugin changes would not re-render cached posts. `npm run
+// build` therefore runs `astro build --force` (official flag) — the previous
+// data-store.json deletion hack (Astro-internal path dependency) was removed.
 
 // Deploy target is env-driven, so moving to a custom domain / Vercel is 2 env vars:
 //   GitHub Pages (default): SITE_URL unset, SITE_BASE unset
@@ -59,7 +38,9 @@ const BASE = process.env.SITE_BASE ?? '/engineer-tenshoku-navi';
 // rehypeBaseLinks (so "#"/http hrefs are already final) and before rehypeExternalLinks.
 function rehypeOfferLinks() {
   const OFFER_HREF = /^offer:([a-z0-9-]+)$/;
+  /** @param {any} tree @param {any} file */
   return (tree, file) => {
+    /** @param {any} node */
     const walk = (node) => {
       if (node && node.tagName === 'a' && node.properties) {
         const h = node.properties.href;
@@ -101,6 +82,7 @@ function rehypeOfferLinks() {
 // Prefix root-relative markdown links (e.g. /guide/foo) with the base path so they
 // resolve correctly under the Pages subpath. (Astro does not rewrite markdown links.)
 function rehypeBaseLinks() {
+  /** @param {any} node */
   const walk = (node) => {
     if (node && node.tagName === 'a' && node.properties) {
       const h = node.properties.href;
@@ -110,7 +92,7 @@ function rehypeBaseLinks() {
     }
     if (node && node.children) node.children.forEach(walk);
   };
-  return (tree) => walk(tree);
+  return (/** @type {any} */ tree) => walk(tree);
 }
 
 export default defineConfig({

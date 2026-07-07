@@ -49,4 +49,4 @@ const ld = schemas.length ? graph(...schemas) : null;
 <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
 <link rel="alternate" type="application/rss+xml" title={SITE.name} href={`${base}/rss.xml`} />
 
-{ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
+{ld && <script is:inline type="application/ld+json" set:html={JSON.stringify(ld)} />}
