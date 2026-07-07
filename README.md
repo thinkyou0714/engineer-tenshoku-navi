@@ -7,9 +7,10 @@
 `affiliate-ops` スキルで作ったニッチキット（7記事・lint済）を、デプロイ可能なサイトに反映したものです。
 
 ## 技術スタック
-- Astro 5（content collections + Zod スキーマ）
-- `@astrojs/sitemap` / `@astrojs/rss`
+- Astro 6（content collections + Zod スキーマ。Node 22.12+）
+- `@astrojs/sitemap`（`lastmod` 連携済み） / `@astrojs/rss`
 - `rehype-external-links`（全外部リンクに `rel="sponsored nofollow noopener"` を自動付与）
+- `astro-og-canvas`（記事ごとの OG 画像を日本語フォント同梱でビルド時生成）
 
 ## クイックスタート
 ```bash
@@ -43,12 +44,16 @@ src/
   utils/schema.ts          # JSON-LD ビルダー（Article/Breadcrumb/FAQPage/Person/Organization）
   layouts/                 # BaseLayout / ArticleLayout
   components/              # Disclosure / AffiliateLink / AuthorBox / Breadcrumb / Header / Footer / ...
-  pages/                   # index / guide/[slug] / shindan(診断) / 404 / rss.xml / about / affiliate-policy / disclosures / privacy
+  pages/                   # index / guide/[slug] / shindan(診断) / og/(OG画像) / 404 / rss.xml / robots.txt / llms.txt / about / ...
+  data/offers.mjs          # アフィリオファーの一元レジストリ（ASP承認後はここに URL 記入）
+  assets/fonts/            # OG画像用 Noto Sans JP（SIL OFL 1.1、OFL.txt 同梱）
 scripts/compliance-lint.py # コンプラ linter（CI gate で使用、vendored）
 scripts/indexnow-submit.mjs# IndexNow 送信（dist/ の sitemap から URL 抽出。--dry-run 対応）
+scripts/validate-jsonld.mjs / check-orphans.mjs / gen-icons.mjs  # CI 検査・アイコン生成
 docs/OPERATIONS.md         # 収益化ランブック（ドメイン移行 / ASP申請 / リンク挿入 / 週次KPI）
-public/robots.txt
+public/                    # favicon.svg / apple-touch-icon.png / logo.png / ads.txt / .well-known/security.txt
 ```
+※ robots.txt / llms.txt / sitemap / OG画像はビルド時に自動生成されます（ドメイン移行に自動追従）。
 
 ## 記事を追加する
 `src/content/posts/<slug>.md` を作成（`drafts/_TEMPLATE-article.md` 相当の frontmatter）。
@@ -62,13 +67,16 @@ public/robots.txt
 - 機械チェックは補助。**最終ゲートは人間の目視**。本サイトは法的助言ではありません。
 
 ## CI（`.github/workflows/ci.yml`）
-push/PR で実行: ① `compliance-lint.py` で `検出数: 0` を必須 ② `npm run build` ③ 外部リンクの `rel=sponsored` 検査
-④ `/guide/*` 内部リンクの存在検査。いずれか失敗で CI が落ちます。
+push/PR で実行: ① `compliance-lint.py` で `検出数: 0` を必須 ② `astro check`(型・0エラー)
+③ `npm run build` ④ 外部リンクの `rel=sponsored` 検査 ⑤ JSON-LD 機械検証(Review/AggregateRating
+禁止ゲート含む) ⑥ orphan ページ検査 ⑦ `/guide/*` 内部リンクの存在検査(base は canonical から自動導出)。
+いずれか失敗で CI が落ちます。加えて週次で外部リンク死活チェック(`link-check.yml`、失敗時 Issue 起票)。
 
-ローカルで:
+ローカルで(Node **22.12+** が必要。Astro 6 の要件):
 ```bash
 python3 scripts/compliance-lint.py --root src/content/posts   # 検出数: 0 を確認
-npm run build
+npx astro check && npm run build
+node scripts/validate-jsonld.mjs dist && node scripts/check-orphans.mjs dist
 ```
 
 ## デプロイ
@@ -77,10 +85,9 @@ npm run build
   base path 対応済み（`astro.config.mjs` の `base`、内部リンク/canonical/sitemap すべて base-aware）。
 - **独自ドメイン / Vercel（本番推奨）に移行する場合**:
   1. 環境変数 `SITE_URL=https://本番ドメイン` と `SITE_BASE=`（空）を設定するだけ
-     （`astro.config.mjs` / `src/data/site.ts` は自動追従。canonical/sitemap/内部リンクも切替）。
-  2. `public/robots.txt` の Sitemap URL を更新。
-  3. Vercel に import（`vercel.json` でセキュリティヘッダ付与）。`.github/workflows/ci.yml` の内部リンク検査の
-     base prefix（`/engineer-tenshoku-navi`）も併せて調整。
+     （canonical / sitemap / 内部リンク / robots.txt / llms.txt / OG画像URL / CI 検査まで自動追従）。
+  2. Vercel に import（`vercel.json` でセキュリティヘッダ + CSP 付与。GitHub Pages はレスポンスヘッダ
+     非対応のため、これらのヘッダは Vercel 配信時のみ有効）。
 - 任意の静的ホスト: `npm run build` の `dist/` を配信。
 
 将来の改善は [ROADMAP.md](./ROADMAP.md)。

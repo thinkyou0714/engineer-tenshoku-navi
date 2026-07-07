@@ -32,22 +32,43 @@
   `INDEXNOW_KEY` 未設定 or `--dry-run` で非破壊確認。
 - **収益化ランブック** (`docs/OPERATIONS.md`): ドメイン移行 → ASP申請 → リンク挿入 → 週次KPI運用の手順書。
 
+## Phase 4 実装済み (2026-07-07・バグ根本修正 + 100アイデア再深堀)
+- **バグ根本修正**: rss.xml channel link の base 欠落 / pending CTA の "#" ジャンプ /
+  CI 内部リンク検査のドメイン移行後 no-op 化 / robots.txt の URL ハードコード(ビルド時生成へ) /
+  compliance-lint の参照切れ / Footer 年号 / Organization schema の logo 404。
+- **セキュリティ**: Astro 5.18→**6.4.8** + esbuild override で npm audit **0件**(6アドバイザリ全解消)。
+  内部実装依存のキャッシュ削除 hack を撤去し `astro build --force` に一本化。dependabot.yml 新設。
+- **SEO**: 記事ごとの **OG画像自動生成**(astro-og-canvas + Noto Sans JP 同梱)、favicon/apple-touch-icon/
+  logo.png、sitemap **lastmod**(updatedDate 連携)、article:published_time/modified_time、theme-color。
+- **AI検索(2026)**: **llms.txt** をビルド時自動生成。
+- **内部リンク**: 記事 `tags` + 関連記事の共有タグスコアリング(全記事同一リストを解消)。
+- **CI強化**: `astro check`(型・0エラー)、JSON-LD 機械検証(Review/AggregateRating 禁止ゲート含む)、
+  orphan ページ検査、週次外部リンク死活チェック(Issue 起票)、PR テンプレート。
+- **CRO/UX**: 404 に人気ページ導線、prefetch(hover)、pending CTA の aria-disabled +(準備中)表示。
+- **配信**: CSP ヘッダ(Vercel 用)、.well-known/security.txt、ads.txt プレースホルダ。
+- **記事衛生**: TODO(実体験) コメント全削除(公開HTMLに漏れていた)、実改稿4記事のみ updatedDate 付与。
+
 ## 次以降（Tier-next・未実装）
 | テーマ | アイデア | 目安 Impact/Effort |
 |---|---|---|
-| SEO | 記事ごとの OG 画像（1200×630）自動生成、`updatedDate` の sitemap lastmod 連携（git timestamp） | 4/2 |
-| 構造化データ | `HowTo`(該当時)。※比較表の `ItemList` は Phase 3 で済 | 2/2 |
-| 内部リンク | 関連記事サイドバー、orphan/アンカー多様性の自動監査。※目次(TOC)は Phase 3 で済 | 4/2-3 |
-| 性能 | 画像導入時の `<Image>`(AVIF/WebP)・font preload、Lighthouse CI | 4/2-3 |
-| コンプラ | CSP ヘッダ（JSON-LD/インラインに配慮した設計）、`ads.txt` | 3/2 |
-| 配信 | Search Console 連携・サイトマップ送信。※IndexNow push は Phase 3 で済（`scripts/indexnow-submit.mjs`） | 3/1-2 |
-| コンテンツ | 競合SERP差分、コンテンツ更新サイクル。※残クラスタ(30代/40代/職務経歴書/年収交渉/診断)は Phase 2–3 で済 | 4/3 |
-| CRO | A/Bテストログ。※診断コンテンツ(/shindan)は Phase 3 で済 | 4/3 |
-| 運用 | rank tracker(API)、リンク切れ定期監査、編集カレンダー | 3/3 |
-| 国際化 | i18n / hreflang（英語展開する場合） | 2/3 |
+| 構造化データ | `HowTo`(該当時) | 2/2 |
+| 内部リンク | アンカーテキスト多様性の自動監査 | 3/2 |
+| 性能 | 画像導入時の `<Image>`(AVIF/WebP)・font preload | 4/2-3 |
+| 配信 | Search Console 連携・サイトマップ送信(人間の初回設定が必要) | 3/1-2 |
+| コンテンツ | 競合SERP差分、コンテンツ更新サイクル | 4/3 |
+| CRO | A/Bテストログ | 4/3 |
+| 運用 | rank tracker(API)、編集カレンダー | 3/3 |
 | ドメイン | 独自ドメイン取得 + 301、ブランド整備（手順は `docs/OPERATIONS.md` §1-1） | 3/1 |
 
 ## 不採用（理由つき）
+- **タグアーカイブページ**: 記事20本では thin content 化・重複リスク。30本超で再検討。
+- **サイト内検索**: 20ページ規模では費用対効果が低い(関連記事タグで代替)。
+- **View Transitions / ClientRouter**: zero-JS 方針と衝突し収益寄与なし。
+- **Lighthouse CI 常設**: 静的極小サイトに恒常CIは過剰。手動実行を OPERATIONS §3 に記載。
+- **i18n / hreflang**: 単一言語サイトのため不要(英語展開時に再検討)。
+- **Astro 7.0.6(2026-07時点)**: コンパイラRust化+markdownパイプライン刷新の直後で、自作 rehype
+  3本が生命線の本サイトには時期尚早。6.4.8 で脆弱性は全解消済み。Sätteri 安定後に移行。
+- **updatedDate の全記事一括付与**: 実改稿なしの日付更新は鮮度偽装 = 真正性ポリシー違反。
 - **AI生成コンテンツの自動量産**: 真正性ポリシーと衝突。雛形+人間/事実比較に留める。
 - **Review/AggregateRating の自動付与**: 実レビュー無しは不可。
 - **アフィリリンクのクローキング(301)**: Google解釈の混乱・Amazon TOS抵触。必要時は 307 か明示。
