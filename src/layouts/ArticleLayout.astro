@@ -41,7 +41,16 @@ const schemas = [
   itemListSchema(itemList),
 ];
 ---
-<BaseLayout title={title} description={description} path={path} ogType="article" schemas={schemas}>
+<BaseLayout
+  title={title}
+  description={description}
+  path={path}
+  ogType="article"
+  schemas={schemas}
+  ogImage={`/og/${slug}.png`}
+  publishedTime={iso(publishDate)}
+  modifiedTime={updatedDate ? iso(updatedDate) : undefined}
+>
   <Breadcrumb items={crumbs} />
   <article class="post">
     <h1>{title}</h1>
