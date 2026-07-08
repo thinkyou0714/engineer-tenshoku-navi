@@ -51,7 +51,7 @@ faq:
 ## 年代別ロードマップ
 
 ### 20代 — 選択肢を広げる
-未経験〜経験浅めなら、対象範囲の広いエージェント+学習の併用が現実的。新卒3年以内・実務1〜3年で動くなら [20代・第二新卒のエンジニア転職ガイド](/guide/cluster-20dai-daini-shinsotsu) で「浅い経験の見せ方」から確認を。SES/客先常駐から自社開発へ移りたい人は [SES脱出ロードマップ](/guide/cluster-ses-dasshutsu) を、SIerからWeb系・自社開発を目指す人は [SIerから自社開発への転職ガイド](/guide/cluster-sier-to-jisha-kaihatsu) を参照。完全未経験は [未経験エンジニア転職ロードマップ](/guide/cluster-mikeiken-roadmap) へ。
+未経験〜経験浅めなら、対象範囲の広いエージェント+学習の併用が現実的。そもそもどの職種を目指すか迷う段階なら [ITエンジニア職種の選び方](/guide/cluster-it-shokushu-erabi) で興味・適性から方向性を整理しておくと動きやすくなります。新卒3年以内・実務1〜3年で動くなら [20代・第二新卒のエンジニア転職ガイド](/guide/cluster-20dai-daini-shinsotsu) で「浅い経験の見せ方」から確認を。自社開発・受託・SESといった業態ごとの働き方の違いは [自社開発・受託・SESの違いと選び方](/guide/cluster-jisha-juttaku-ses-hikaku) で押さえられます。SES/客先常駐から自社開発へ移りたい人は [SES脱出ロードマップ](/guide/cluster-ses-dasshutsu) を、SIerからWeb系・自社開発を目指す人は [SIerから自社開発への転職ガイド](/guide/cluster-sier-to-jisha-kaihatsu) を参照。完全未経験は [未経験エンジニア転職ロードマップ](/guide/cluster-mikeiken-roadmap) へ。
 
 ### 30代 — 専門性で勝負
 実務経験を「何の課題を、どの技術で、どう解決したか」で言語化するのが鍵。エンジニア特化エージェントで市場価値と求人レンジを確認しましょう。詳細は [30代エンジニアの転職](/guide/cluster-30dai-engineer-tenshoku)。働き方の条件から絞りたい人は [フルリモート転職ガイド](/guide/cluster-remote-engineer-tenshoku) を、フリーランス転向と迷っている人は [フリーランス vs 正社員の判断軸](/guide/cluster-freelance-vs-seishain) もあわせてどうぞ。
@@ -62,15 +62,18 @@ faq:
 ## 書類・準備のノウハウ
 
 - 職務経歴書 → [エンジニアの職務経歴書の書き方](/guide/cluster-shokumukeirekisho)
+- ポートフォリオ(未経験・実績が薄い人) → [未経験エンジニアのポートフォリオの作り方](/guide/cluster-portfolio-tsukurikata)
 - 面接(技術面接・逆質問) → [エンジニア転職の面接対策](/guide/cluster-mensetsu-taisaku)
 - 年収交渉 → [エンジニアの年収交渉](/guide/cluster-nenshu-kosho)
 - 未経験のスクール選び → [プログラミングスクールの選び方](/guide/cluster-school-erabi)
 
 ## 失敗を避ける3つの原則
 
-1. **複数併用**: 1社に絞らず2〜3社。求人の重複を避け、担当との相性を比較できます。
+1. **複数併用**: 1社に絞らず2〜3社。求人の重複を避け、担当との相性を比較できます。具体的な組み合わせ方や掛け持ちのマナーは [転職エージェントの複数併用の使い方](/guide/cluster-agent-fukusuu-tsukaikata) にまとめています。
 2. **準備**: 職務経歴書は技術スタック・役割・実績を具体化。添削はエージェントに依頼できます。
 3. **無料を理解する**: エージェント利用は求職者は無料。費用は採用企業が負担します。
+
+これらを含め、入社後に「思っていたのと違った」と後悔しやすいパターンと回避策は [転職で失敗・後悔しないための注意点](/guide/cluster-tenshoku-shippai-koukai) に整理しています。
 
 ## よくある質問
 
