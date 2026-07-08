@@ -77,7 +77,11 @@ push/PR で実行: ① `compliance-lint.py` で `検出数: 0` を必須 ② `as
 python3 scripts/compliance-lint.py --root src/content/posts   # 検出数: 0 を確認
 npx astro check && npm run build
 node scripts/validate-jsonld.mjs dist && node scripts/check-orphans.mjs dist
+npm run audit   # アンカーテキスト過集中 + コンテンツ鮮度の助言(非ブロック)
 ```
+
+新しい記事は `drafts/_TEMPLATE-article.md` をコピーして書き始めると、frontmatter・
+コンプラチェックリスト・CTA/内部リンクの雛形が揃っています。
 
 ## デプロイ
 - **GitHub Pages（現在の公開先）**: `main` への push で `.github/workflows/deploy.yml`（`withastro/action`）が

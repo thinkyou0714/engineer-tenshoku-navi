@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build --force",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "audit": "node scripts/audit-anchors.mjs && node scripts/audit-freshness.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
