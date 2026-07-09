@@ -51,31 +51,38 @@ faq:
 ## 年代別ロードマップ
 
 ### 20代 — 選択肢を広げる
-未経験〜経験浅めなら、対象範囲の広いエージェント+学習の併用が現実的。新卒3年以内・実務1〜3年で動くなら [20代・第二新卒のエンジニア転職ガイド](/guide/cluster-20dai-daini-shinsotsu) で「浅い経験の見せ方」から確認を。SES/客先常駐から自社開発へ移りたい人は [SES脱出ロードマップ](/guide/cluster-ses-dasshutsu) を、SIerからWeb系・自社開発を目指す人は [SIerから自社開発への転職ガイド](/guide/cluster-sier-to-jisha-kaihatsu) を参照。完全未経験は [未経験エンジニア転職ロードマップ](/guide/cluster-mikeiken-roadmap) へ。
+未経験〜経験浅めなら、対象範囲の広いエージェント+学習の併用が現実的。そもそもどの職種を目指すか迷う段階なら [ITエンジニア職種の選び方](/guide/cluster-it-shokushu-erabi) で興味・適性から方向性を整理しておくと動きやすくなります。学習を独学で進めるかスクールを使うかで迷うなら [独学とスクールはどっちが良いか](/guide/cluster-dokugaku-vs-school) で判断軸を確認でき、特定領域から入るイメージがある人は [インフラエンジニアの転職ガイド](/guide/cluster-infra-engineer-tenshoku) のような職種別ガイドも入口になります。Web開発を軸に考えるなら [フロントエンドエンジニアの転職ガイド](/guide/cluster-frontend-engineer-tenshoku) と [バックエンドエンジニアの転職ガイド](/guide/cluster-backend-engineer-tenshoku) で、それぞれの仕事範囲を読み比べておくと選びやすくなります。新卒3年以内・実務1〜3年で動くなら [20代・第二新卒のエンジニア転職ガイド](/guide/cluster-20dai-daini-shinsotsu) で「浅い経験の見せ方」から確認を。自社開発・受託・SESといった業態ごとの働き方の違いは [自社開発・受託・SESの違いと選び方](/guide/cluster-jisha-juttaku-ses-hikaku) で押さえられます。SES/客先常駐から自社開発へ移りたい人は [SES脱出ロードマップ](/guide/cluster-ses-dasshutsu) を、SIerからWeb系・自社開発を目指す人は [SIerから自社開発への転職ガイド](/guide/cluster-sier-to-jisha-kaihatsu) を参照。客先常駐ではなく事業会社側で腰を据えて働く道を探すなら [社内SE(事業会社)への転職ガイド](/guide/cluster-shanai-se) も選択肢に入ります。完全未経験は [未経験エンジニア転職ロードマップ](/guide/cluster-mikeiken-roadmap) へ。
 
 ### 30代 — 専門性で勝負
 実務経験を「何の課題を、どの技術で、どう解決したか」で言語化するのが鍵。エンジニア特化エージェントで市場価値と求人レンジを確認しましょう。詳細は [30代エンジニアの転職](/guide/cluster-30dai-engineer-tenshoku)。働き方の条件から絞りたい人は [フルリモート転職ガイド](/guide/cluster-remote-engineer-tenshoku) を、フリーランス転向と迷っている人は [フリーランス vs 正社員の判断軸](/guide/cluster-freelance-vs-seishain) もあわせてどうぞ。
 
 ### 40代・ハイクラス — 受け身で測る
-管理職/テックリード層は、スカウト型で市場の評価を受け取りつつ、ハイクラス特化のエージェントを併用。年収交渉は面談・オファー段階で行うのが定石です。詳細は [40代ハイクラス転職](/guide/cluster-40dai-highclass)。
+管理職/テックリード層は、スカウト型で市場の評価を受け取りつつ、ハイクラス特化のエージェントを併用。年収交渉は面談・オファー段階で行うのが定石です。年収が動く仕組みそのものを先に押さえたい人は [転職で年収を上げる考え方](/guide/cluster-nenshu-up) もあわせてどうぞ。詳細は [40代ハイクラス転職](/guide/cluster-40dai-highclass)。
 
 ## 書類・準備のノウハウ
 
+着手する順番や全体像から把握したい人は、やることを段階ごとに並べた [エンジニア転職の準備・やることリスト](/guide/cluster-tenshoku-junbi) をハブとして使えます。個別のノウハウは次のとおりです。
+
 - 職務経歴書 → [エンジニアの職務経歴書の書き方](/guide/cluster-shokumukeirekisho)
+- 志望動機(転職理由との一貫性) → [エンジニア転職の志望動機の書き方](/guide/cluster-shiboudouki)
+- ポートフォリオ(未経験・実績が薄い人) → [未経験エンジニアのポートフォリオの作り方](/guide/cluster-portfolio-tsukurikata)
 - 面接(技術面接・逆質問) → [エンジニア転職の面接対策](/guide/cluster-mensetsu-taisaku)
 - 年収交渉 → [エンジニアの年収交渉](/guide/cluster-nenshu-kosho)
 - 未経験のスクール選び → [プログラミングスクールの選び方](/guide/cluster-school-erabi)
+- 資格の要否・選び方 → [エンジニア転職に資格は必要?](/guide/cluster-shikaku)
 
 ## 失敗を避ける3つの原則
 
-1. **複数併用**: 1社に絞らず2〜3社。求人の重複を避け、担当との相性を比較できます。
+1. **複数併用**: 1社に絞らず2〜3社。求人の重複を避け、担当との相性を比較できます。具体的な組み合わせ方や掛け持ちのマナーは [転職エージェントの複数併用の使い方](/guide/cluster-agent-fukusuu-tsukaikata) にまとめています。
 2. **準備**: 職務経歴書は技術スタック・役割・実績を具体化。添削はエージェントに依頼できます。
 3. **無料を理解する**: エージェント利用は求職者は無料。費用は採用企業が負担します。
+
+これらを含め、入社後に「思っていたのと違った」と後悔しやすいパターンと回避策は [転職で失敗・後悔しないための注意点](/guide/cluster-tenshoku-shippai-koukai) に整理しています。
 
 ## よくある質問
 
 **Q. 料金はかかる?** いいえ、求職者は無料です(採用企業が費用負担)。
-**Q. 在職中でも使える?** 使えます。面談は時間調整可、スカウト型は受け身で続けられます。時間の作り方や情報管理の注意点は [在職中の転職活動の進め方](/guide/cluster-zaishokuchu-tenshoku) にまとめています。
+**Q. 在職中でも使える?** 使えます。面談は時間調整可、スカウト型は受け身で続けられます。時間の作り方や情報管理の注意点は [在職中の転職活動の進め方](/guide/cluster-zaishokuchu-tenshoku) に、内定後に現職を円満に辞める段取りは [円満退職の進め方(伝え方・引き継ぎ)](/guide/cluster-taishoku-tsutaekata) にまとめています。
 **Q. 何社登録すればいい?** 一般的には特化エージェント1社+スカウト1社の計2〜3社から。
 
 ## まず無料で始める(登録・相談は無料)
