@@ -43,6 +43,7 @@ faq:
 
 ## 次に読む
 
+- 準備の全体像とやることを段階で押さえるなら → [転職準備・やることリスト](/guide/cluster-tenshoku-junbi)
 - 客先常駐からの脱出を狙うなら → [SES脱出ロードマップ](/guide/cluster-ses-dasshutsu)
 - 経験を積んだ後の本格転職 → [エージェントの選び方](/guide/compare-levtech-bizreach-doda)
 
