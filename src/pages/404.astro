@@ -6,4 +6,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   <h1>ページが見つかりません（404）</h1>
   <p>お探しのページは移動または削除された可能性があります。</p>
   <p><a href={`${base}/`}>ホームに戻る</a></p>
+  <h2>よく読まれているページ</h2>
+  <ul>
+    <li><a href={`${base}/guide/pillar-engineer-tenshoku-guide`}>エンジニア転職 完全ガイド</a></li>
+    <li><a href={`${base}/shindan`}>転職サービス診断（無料・30秒）</a></li>
+    <li><a href={`${base}/guide/compare-levtech-bizreach-doda`}>レバテック/ビズリーチ/doda 3社比較</a></li>
+  </ul>
 </BaseLayout>

@@ -26,10 +26,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Astro 6 requires Node >= 22.12
+          node-version: '24'
           cache: 'npm'
 
       - run: npm ci
+      - run: npx astro check
       - run: npm run build
 
       - name: Affiliate-link compliance (rel=sponsored on external links)
@@ -42,13 +44,28 @@ jobs:
           fi
           echo "OK: all external links carry rel=sponsored"
 
+      - name: JSON-LD validation (structured data parses + policy gate)
+        run: node scripts/validate-jsonld.mjs dist
+
+      - name: Orphan page check (all /guide pages reachable from /)
+        run: node scripts/check-orphans.mjs dist
+
       - name: Internal link check (/guide/* targets exist)
         run: |
+          # base prefix をビルド成果物の canonical から導出する(ハードコードだと
+          # ドメイン移行後に grep が1件もマッチせず検査が静かに no-op 化するため)。
+          canon="$(grep -hoE '<link rel="canonical" href="[^"]+"' dist/index.html | sed -E 's/.*href="([^"]+)".*/\1/')"
+          base="$(printf '%s' "$canon" | sed -E 's#^https?://[^/]+##; s#/+$##')"
+          echo "resolved base prefix: '${base}'"
+          hrefs="$(grep -rhoE "href=\"${base}/guide/[a-z0-9-]+\"" dist/ | sed -E 's/.*href="([^"]+)".*/\1/' | sort -u)"
+          if [ -z "$hrefs" ]; then
+            echo "::error::no internal ${base}/guide/* links found in dist — base derivation broken or site has no internal links (check would be a no-op)"
+            exit 1
+          fi
           miss=0
-          for href in $(grep -rhoE 'href="/engineer-tenshoku-navi/guide/[a-z0-9-]+"' dist/ \
-                        | sed -E 's/.*href="([^"]+)".*/\1/' | sort -u); do
-            rel="${href#/engineer-tenshoku-navi}"
+          for href in $hrefs; do
+            rel="${href#"$base"}"
             [ -f "dist${rel}/index.html" ] || { echo "broken internal link: $href"; miss=$((miss+1)); }
           done
           [ "$miss" -eq 0 ] || { echo "::error::$miss broken internal link(s)"; exit 1; }
-          echo "OK: internal /guide links resolve"
+          echo "OK: $(echo "$hrefs" | wc -l) unique internal ${base}/guide links resolve"

@@ -9,6 +9,12 @@ interface Props {
   ogType?: string;
   schemas?: unknown[];
   noindex?: boolean;
+  /** site-relative OG image path (e.g. "/og/<slug>.png"). Defaults to the site-wide image. */
+  ogImage?: string;
+  /** ISO datetime for article:published_time (article pages only) */
+  publishedTime?: string;
+  /** ISO datetime for article:modified_time (article pages only) */
+  modifiedTime?: string;
 }
 
 const {
@@ -18,6 +24,9 @@ const {
   ogType = 'website',
   schemas = [],
   noindex = false,
+  ogImage = '/og/default.png',
+  publishedTime,
+  modifiedTime,
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -26,11 +35,16 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const canonical = new URL(Astro.url.pathname, SITE.origin).href;
 const fullTitle = path === '/' ? `${SITE.name}｜${SITE.tagline}` : `${title}｜${SITE.name}`;
 const ld = schemas.length ? graph(...schemas) : null;
+// Google Search Console のドメイン所有権確認(env で任意設定。未設定なら出力しない)。
+const gscToken = import.meta.env.PUBLIC_GSC_VERIFICATION;
+// OG 画像は SITE.url(origin+base)基準の絶対URL(SNS クローラは相対を解決しない)。
+const ogImageAbs = SITE.origin + base + ogImage;
 ---
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
+{gscToken && <meta name="google-site-verification" content={gscToken} />}
 <link rel="canonical" href={canonical} />
 {noindex
   ? <meta name="robots" content="noindex, nofollow" />
@@ -42,11 +56,22 @@ const ld = schemas.length ? graph(...schemas) : null;
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
 <meta property="og:locale" content={SITE.locale} />
+<meta property="og:image" content={ogImageAbs} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={fullTitle} />
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageAbs} />
+
+<link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+<link rel="apple-touch-icon" href={`${base}/apple-touch-icon.png`} />
+<meta name="theme-color" content="#1f6feb" />
 
 <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
 <link rel="alternate" type="application/rss+xml" title={SITE.name} href={`${base}/rss.xml`} />
 
-{ld && <script type="application/ld+json" set:html={JSON.stringify(ld)} />}
+{ld && <script is:inline type="application/ld+json" set:html={JSON.stringify(ld)} />}

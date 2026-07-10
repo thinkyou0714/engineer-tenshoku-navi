@@ -46,6 +46,28 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           try { localStorage.setItem(KEY, 'denied'); } catch (e) {}
           if (banner) banner.hidden = true;
         });
+        // Affiliate click tracking (delegated, capture phase so it fires even if the
+        // page navigates). Never blocks or delays navigation; no-op before consent
+        // (window.gtag is only defined after the visitor opts in).
+        document.addEventListener('click', function (ev) {
+          try {
+            if (typeof window.gtag !== 'function') return;
+            var el = ev.target;
+            var a = el && el.closest ? el.closest('a') : null;
+            if (!a) return;
+            var isOffer = a.hasAttribute('data-offer');
+            var rel = (a.getAttribute('rel') || '');
+            var isSponsored = rel.indexOf('sponsored') !== -1 &&
+              (a.getAttribute('href') || '').indexOf('http') === 0;
+            if (!isOffer && !isSponsored) return;
+            window.gtag('event', 'affiliate_click', {
+              offer_id: a.dataset.offer || '(external)',
+              link_url: a.href,
+              link_text: (a.textContent || '').trim().slice(0, 80),
+              active: a.hasAttribute('data-offer-pending') ? 'false' : 'true'
+            });
+          } catch (e) { /* never break navigation */ }
+        }, true);
       })();
     </script>
   </>

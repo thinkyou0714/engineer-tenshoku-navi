@@ -1,16 +1,17 @@
+# 依存の脆弱性・更新を自動PR化する(2026-07 に astro の6件を手動対応した再発防止)。
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: "/"
+    directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 5
     groups:
-      npm-minor-and-patch:
-        update-types:
-          - minor
-          - patch
-
+      astro:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
   - package-ecosystem: github-actions
-    directory: "/"
+    directory: /
     schedule:
       interval: weekly

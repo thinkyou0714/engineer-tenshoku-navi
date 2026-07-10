@@ -21,7 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build with Astro
-        uses: withastro/action@v3
+        # v6: Node 24 デフォルト(Astro 6 の Node>=22.12 要件)。build-cmd 未指定時は
+        # `npm run build`(= astro build --force)を実行する。
+        uses: withastro/action@v6
 
   deploy:
     needs: build

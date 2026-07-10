@@ -83,6 +83,20 @@ export function faqSchema(faqs?: Faq[]) {
   };
 }
 
+// 比較記事向けの ItemList。名前の羅列のみで、Review/AggregateRating は
+// サイト方針として絶対に使わない(上の NOTE 参照)。
+export function itemListSchema(names?: string[]) {
+  if (!names || !names.length) return null;
+  return {
+    '@type': 'ItemList',
+    itemListElement: names.map((name, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name,
+    })),
+  };
+}
+
 export function graph(...nodes: unknown[]) {
   return { '@context': 'https://schema.org', '@graph': nodes.filter(Boolean) };
 }

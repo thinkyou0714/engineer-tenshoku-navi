@@ -100,3 +100,8 @@ a:hover { color: var(--accent-dark); }
 .consent button { font-size: .85rem; padding: 6px 14px; border-radius: 6px; border: 1px solid #555; cursor: pointer; }
 .consent .ok { background: var(--accent); color: #fff; border-color: var(--accent); }
 .consent .no { background: transparent; color: #ddd; }
+
+/* Pending affiliate CTA (href="#" until the ASP URL is filled in offers.mjs).
+   Kept clickable for demand measurement; BaseLayout suppresses the "#" jump. */
+.prose a[data-offer-pending] { color: var(--muted); cursor: default; text-decoration-style: dotted; }
+.prose a[data-offer-pending]::after { content: "（準備中）"; font-size: .85em; color: var(--muted); }
