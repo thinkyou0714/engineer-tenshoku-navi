@@ -52,7 +52,7 @@ jobs:
           fi
       - name: Open issue on failure
         if: failure() && steps.check.outputs.broken != ''
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             await github.rest.issues.create({
