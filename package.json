@@ -27,6 +27,6 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@astrojs/markdown-remark": "^7.2.1",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }
