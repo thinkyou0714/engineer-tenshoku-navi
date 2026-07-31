@@ -28,7 +28,7 @@ jobs:
           echo "$out" | grep -q '検出数: 0' \
             || { echo '::error::compliance lint found risky expressions in src/content/posts'; exit 1; }
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           # Astro 6 requires Node >= 22.12
           node-version: '24'
