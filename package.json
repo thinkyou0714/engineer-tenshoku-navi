@@ -18,7 +18,11 @@
     "rehype-external-links": "^3.0.0"
   },
   "overrides": {
-    "esbuild": "^0.28.1"
+    "esbuild": "^0.28.1",
+    "fast-uri": "3.1.4",
+    "postcss": "8.5.18",
+    "sharp": "0.35.0",
+    "svgo": "4.0.2"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
