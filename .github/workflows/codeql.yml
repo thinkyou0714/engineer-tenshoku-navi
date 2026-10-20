@@ -33,4 +33,4 @@ jobs:
           languages: javascript-typescript
 
       - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@dd903d2e4f5405488e5ef1422510ee31c8b32357 # v3
+        uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v3
